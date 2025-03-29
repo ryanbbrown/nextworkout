@@ -29,6 +29,10 @@ export const fetchExercises = async () => {
 
 // Fetch exercises by group ID
 export const fetchExercisesByGroup = async (groupId: string) => {
+  if (!groupId) {
+    return [] as Exercise[];
+  }
+  
   const { data, error } = await supabase
     .from('exercises')
     .select('*')

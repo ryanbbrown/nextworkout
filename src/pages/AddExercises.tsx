@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useExerciseGroups, useCreateExerciseGroup, useUpdateExerciseGroup, useDeleteExerciseGroup, ExerciseGroup } from "@/services/exerciseGroups";
-import { useExercisesByGroup, useCreateExercise, useUpdateExercise, useDeleteExercise, Exercise } from "@/services/exercises";
+import { useExercises, useExercisesByGroup, useCreateExercise, useUpdateExercise, useDeleteExercise, Exercise } from "@/services/exercises";
 
 const AddExercises = () => {
   const { user } = useAuth();
@@ -40,7 +40,8 @@ const AddExercises = () => {
   
   // Data fetching
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
-  const { data: currentGroupExercises } = useExercisesByGroup(currentGroupId || '');
+  // Fetch all exercises once
+  const { data: allExercises = [] } = useExercises();
   
   // Mutations
   const createGroupMutation = useCreateExerciseGroup();
@@ -59,6 +60,11 @@ const AddExercises = () => {
     { name: "Orange", value: "#f97316" },
     { name: "Pink", value: "#ec4899" },
   ];
+  
+  // Filter exercises by group
+  const getExercisesByGroup = (groupId: string) => {
+    return allExercises.filter(exercise => exercise.group_id === groupId);
+  };
   
   // Handlers for group operations
   const handleCreateGroup = () => {
@@ -284,7 +290,7 @@ const AddExercises = () => {
                 
                 {!isReordering && (
                   <div className="grid grid-cols-3 gap-3">
-                    {currentGroupExercises?.filter(e => e.group_id === group.id).map((exercise) => (
+                    {getExercisesByGroup(group.id).map((exercise) => (
                       <Button
                         key={exercise.id}
                         variant="outline"
