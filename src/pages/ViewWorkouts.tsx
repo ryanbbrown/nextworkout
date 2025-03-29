@@ -28,7 +28,7 @@ const ViewWorkouts = () => {
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">
-                  {format(new Date(workout.date), 'EEEE, MMMM d, yyyy')}
+                  {format(new Date(workout.created_at), 'EEEE, MMMM d, yyyy')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
