@@ -1,34 +1,48 @@
 # Database Schema
 
-**User**
+**users**
+Default Supabase user model
+- id: uuid
 
-This can be the default Supabase user model
+**exercise_groups**
+- id: uuid
+- name: str
+- color: str
+- num_exercises_to_show: int
+- user_id: FK to id in users table
+- created_at: timestampz
+- updated_at: timestampz, nullable
 
-- user_id
-- name
-- username
-- password?
-
-**ExerciseGroup**
-
-- group_id
-- Name: str
-- Color: str
-- num_exercises_to_show: int = 2
-- user_id: links to User
-
-**Exercise**
-
-- exercise_id
-- Name: str
-- Description: str
-- group_id: links to ExerciseGroup
-- user_id: links to User
+**exercises**
+- id: uuid
+- name: str
+- description: str
+- group_id: id in exercise_grups table
+- user_id: FK to id in users table
 - last_performed: date, nullable
 - last_dequeued: date, nullable
+- created_at: timestampz
+- updated_at: timestampz, nullable
+
+**workouts**
+- id: uuid
+- user_id: FK to id in users table
+- created_at: timestampz
+- updated_at: timestampz, nullable
+- notes: str, nullable
+
+
+**workout_exercises**
+- id: uuid
+- sets: int
+- workout_id: FK to id in workouts table
+- exercise_id: FK to id in exercises table
+- user_id: FK to id in users table
+- created_at: timestampz
+- updated_at: timestampz, nullable
+
 
 # API Calls
-
 - List all exercise groups
 - Create exercise group
 - Update exercise group
