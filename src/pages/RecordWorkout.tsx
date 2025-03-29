@@ -9,6 +9,7 @@ import { useExerciseGroups } from "@/services/exerciseGroups";
 import { useExercisesByGroup, Exercise } from "@/services/exercises";
 import { useCreateWorkout } from "@/services/workouts";
 import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
 
 const RecordWorkout = () => {
   const { user } = useAuth();
@@ -18,13 +19,14 @@ const RecordWorkout = () => {
   // Data fetching
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
   
-  // State for tracking selected exercises
+  // State for tracking selected exercises and notes
   const [selectedExercises, setSelectedExercises] = useState<{
     id: string;
     name: string;
     sets: number;
     details: string;
   }[]>([]);
+  const [notes, setNotes] = useState<string>("");
   
   // Mutations
   const createWorkoutMutation = useCreateWorkout();
@@ -38,7 +40,7 @@ const RecordWorkout = () => {
           e.id === exercise.id ? { ...e, sets: e.sets + 1 } : e
         );
       } else {
-        return [...prev, { id: exercise.id, name: exercise.name, sets: 1, details: exercise.description }];
+        return [...prev, { id: exercise.id, name: exercise.name, sets: 1, details: "" }];
       }
     });
   };
@@ -57,6 +59,13 @@ const RecordWorkout = () => {
     });
   };
   
+  // Update exercise details
+  const updateExerciseDetails = (exerciseId: string, details: string) => {
+    setSelectedExercises(prev => 
+      prev.map(e => e.id === exerciseId ? { ...e, details } : e)
+    );
+  };
+  
   // Save workout
   const handleSaveWorkout = () => {
     if (selectedExercises.length === 0) {
@@ -72,14 +81,17 @@ const RecordWorkout = () => {
     const workoutExercises = selectedExercises.map(exercise => ({
       exercise_id: exercise.id,
       sets: exercise.sets,
-      details: exercise.details
+      details: exercise.details,
+      user_id: user?.id || ''
     }));
     
     // Create the workout
     createWorkoutMutation.mutate({
       workout: {
         user_id: user?.id || '',
-        date: new Date().toISOString()
+        notes: notes.trim() || null,
+        created_at: new Date().toISOString(),
+        updated_at: null
       },
       workoutExercises
     }, {
@@ -116,29 +128,39 @@ const RecordWorkout = () => {
                 {selectedExercises.map((exercise) => (
                   <div 
                     key={exercise.id}
-                    className="p-3 bg-gray-700 rounded-lg flex justify-between items-center cursor-pointer"
-                    onClick={() => removeSetOrExercise(exercise.id)}
+                    className="p-3 bg-gray-700 rounded-lg"
                   >
-                    <div>
+                    <div className="flex justify-between items-center cursor-pointer mb-2" 
+                         onClick={() => removeSetOrExercise(exercise.id)}>
                       <h3 className="font-medium">{exercise.name}</h3>
-                      <p className="text-xs text-gray-400">{exercise.details}</p>
+                      <div className="text-sm text-gray-400">
+                        {exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-400">
-                      {exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}
-                    </div>
+                    <Textarea
+                      placeholder="Notes about this exercise (optional)"
+                      className="text-xs bg-gray-800 border-gray-700"
+                      value={exercise.details}
+                      onChange={(e) => updateExerciseDetails(exercise.id, e.target.value)}
+                    />
                   </div>
                 ))}
 
-                {selectedExercises.length > 0 && (
-                  <Button 
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700"
-                    onClick={handleSaveWorkout}
-                    disabled={createWorkoutMutation.isPending}
-                  >
-                    <Check className="h-4 w-4 mr-2" />
-                    {createWorkoutMutation.isPending ? "Saving..." : "Record Workout"}
-                  </Button>
-                )}
+                <Textarea
+                  placeholder="Workout notes (optional)"
+                  className="w-full mt-4 bg-gray-700 border-gray-600"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+
+                <Button 
+                  className="w-full mt-4 bg-green-600 hover:bg-green-700"
+                  onClick={handleSaveWorkout}
+                  disabled={createWorkoutMutation.isPending}
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  {createWorkoutMutation.isPending ? "Saving..." : "Record Workout"}
+                </Button>
               </div>
             )}
           </CardContent>

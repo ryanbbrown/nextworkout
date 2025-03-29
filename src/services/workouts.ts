@@ -8,14 +8,18 @@ export interface WorkoutExercise {
   workout_id: string;
   exercise_id: string;
   sets: number;
-  details: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string | null;
   exercise?: Exercise;
 }
 
 export interface Workout {
   id: string;
   user_id: string;
-  date: string;
+  created_at: string;
+  updated_at: string | null;
+  notes: string | null;
   workout_exercises?: WorkoutExercise[];
 }
 
@@ -30,7 +34,7 @@ export const fetchWorkouts = async () => {
         exercise:exercises(*)
       )
     `)
-    .order('date', { ascending: false });
+    .order('created_at', { ascending: false });
   
   if (error) {
     console.error('Error fetching workouts:', error);
@@ -41,7 +45,7 @@ export const fetchWorkouts = async () => {
 };
 
 // Create a new workout with exercises
-export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id'>[]) => {
+export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id' | 'created_at' | 'updated_at'>[]) => {
   // Start a transaction
   const { data: workoutData, error: workoutError } = await supabase
     .from('workouts')
@@ -98,7 +102,7 @@ export const useCreateWorkout = () => {
   return useMutation({
     mutationFn: ({ workout, workoutExercises }: { 
       workout: Omit<Workout, 'id'>, 
-      workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id'>[] 
+      workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id' | 'created_at' | 'updated_at'>[] 
     }) => createWorkout(workout, workoutExercises),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workouts'] });
