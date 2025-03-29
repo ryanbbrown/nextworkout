@@ -24,7 +24,6 @@ const RecordWorkout = () => {
     id: string;
     name: string;
     sets: number;
-    details: string;
   }[]>([]);
   const [notes, setNotes] = useState<string>("");
   
@@ -40,7 +39,7 @@ const RecordWorkout = () => {
           e.id === exercise.id ? { ...e, sets: e.sets + 1 } : e
         );
       } else {
-        return [...prev, { id: exercise.id, name: exercise.name, sets: 1, details: "" }];
+        return [...prev, { id: exercise.id, name: exercise.name, sets: 1 }];
       }
     });
   };
@@ -59,13 +58,6 @@ const RecordWorkout = () => {
     });
   };
   
-  // Update exercise details
-  const updateExerciseDetails = (exerciseId: string, details: string) => {
-    setSelectedExercises(prev => 
-      prev.map(e => e.id === exerciseId ? { ...e, details } : e)
-    );
-  };
-  
   // Save workout
   const handleSaveWorkout = () => {
     if (selectedExercises.length === 0) {
@@ -81,7 +73,6 @@ const RecordWorkout = () => {
     const workoutExercises = selectedExercises.map(exercise => ({
       exercise_id: exercise.id,
       sets: exercise.sets,
-      details: exercise.details,
       user_id: user?.id || ''
     }));
     
@@ -130,19 +121,13 @@ const RecordWorkout = () => {
                     key={exercise.id}
                     className="p-3 bg-gray-700 rounded-lg"
                   >
-                    <div className="flex justify-between items-center cursor-pointer mb-2" 
+                    <div className="flex justify-between items-center cursor-pointer" 
                          onClick={() => removeSetOrExercise(exercise.id)}>
                       <h3 className="font-medium">{exercise.name}</h3>
                       <div className="text-sm text-gray-400">
                         {exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}
                       </div>
                     </div>
-                    <Textarea
-                      placeholder="Notes about this exercise (optional)"
-                      className="text-xs bg-gray-800 border-gray-700"
-                      value={exercise.details}
-                      onChange={(e) => updateExerciseDetails(exercise.id, e.target.value)}
-                    />
                   </div>
                 ))}
 
