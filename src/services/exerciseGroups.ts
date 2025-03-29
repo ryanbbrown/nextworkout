@@ -12,69 +12,101 @@ export interface ExerciseGroup {
 
 // Fetch all exercise groups for the current user
 export const fetchExerciseGroups = async () => {
-  const { data, error } = await supabase
-    .from('exercise_groups')
-    .select('*')
-    .order('id');
-  
-  if (error) {
-    console.error('Error fetching exercise groups:', error);
+  try {
+    const { data, error } = await supabase
+      .from('exercise_groups')
+      .select('*')
+      .order('id');
+    
+    if (error) {
+      console.error('Error fetching exercise groups:', error);
+      if (error.code === '42P01') {
+        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
+      }
+      throw error;
+    }
+    
+    return data as ExerciseGroup[];
+  } catch (error: any) {
+    console.error('Error in fetchExerciseGroups:', error);
     throw error;
   }
-  
-  return data as ExerciseGroup[];
 };
 
 // Create a new exercise group
 export const createExerciseGroup = async (exerciseGroup: Omit<ExerciseGroup, 'id'>) => {
-  const { data, error } = await supabase
-    .from('exercise_groups')
-    .insert(exerciseGroup)
-    .select()
-    .single();
-  
-  if (error) {
-    console.error('Error creating exercise group:', error);
+  try {
+    const { data, error } = await supabase
+      .from('exercise_groups')
+      .insert(exerciseGroup)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error creating exercise group:', error);
+      if (error.code === '42P01') {
+        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
+      }
+      throw error;
+    }
+    
+    return data as ExerciseGroup;
+  } catch (error: any) {
+    console.error('Detailed error in createExerciseGroup:', error);
     throw error;
   }
-  
-  return data as ExerciseGroup;
 };
 
 // Update an exercise group
 export const updateExerciseGroup = async (exerciseGroup: ExerciseGroup) => {
-  const { data, error } = await supabase
-    .from('exercise_groups')
-    .update({
-      name: exerciseGroup.name,
-      color: exerciseGroup.color,
-      num_exercises_to_show: exerciseGroup.num_exercises_to_show
-    })
-    .eq('id', exerciseGroup.id)
-    .select()
-    .single();
-  
-  if (error) {
-    console.error('Error updating exercise group:', error);
+  try {
+    const { data, error } = await supabase
+      .from('exercise_groups')
+      .update({
+        name: exerciseGroup.name,
+        color: exerciseGroup.color,
+        num_exercises_to_show: exerciseGroup.num_exercises_to_show
+      })
+      .eq('id', exerciseGroup.id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error updating exercise group:', error);
+      if (error.code === '42P01') {
+        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
+      }
+      throw error;
+    }
+    
+    return data as ExerciseGroup;
+  } catch (error: any) {
+    console.error('Error in updateExerciseGroup:', error);
     throw error;
   }
-  
-  return data as ExerciseGroup;
 };
 
 // Delete an exercise group
 export const deleteExerciseGroup = async (id: string) => {
-  const { error } = await supabase
-    .from('exercise_groups')
-    .delete()
-    .eq('id', id);
-  
-  if (error) {
-    console.error('Error deleting exercise group:', error);
+  try {
+    const { error } = await supabase
+      .from('exercise_groups')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error('Error deleting exercise group:', error);
+      if (error.code === '42P01') {
+        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
+      }
+      throw error;
+    }
+    
+    return id;
+  } catch (error: any) {
+    console.error('Error in deleteExerciseGroup:', error);
     throw error;
   }
-  
-  return id;
 };
 
 // React Query hooks
