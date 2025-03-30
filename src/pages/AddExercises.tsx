@@ -284,10 +284,9 @@ const AddExercises = () => {
                             className="flex flex-col items-center h-24 bg-zinc-900 hover:bg-zinc-700 text-left border border-zinc-800 rounded-xl relative p-3"
                             onClick={() => openEditExerciseModal(exercise)}
                           >
-                            <Pencil className="h-3 w-3 absolute top-2 right-2 text-neutral-500" />
-                            <div className="mt-2 text-center w-full">
-                              <p className="font-medium text-sm line-clamp-2 break-words">{exercise.name}</p>
-                              <p className="text-xs text-neutral-400 line-clamp-2 break-words">{exercise.description}</p>
+                            <div className="w-full h-full flex flex-col justify-center">
+                              <p className="font-medium text-sm whitespace-normal text-center break-words">{exercise.name}</p>
+                              <p className="text-xs text-neutral-400 text-center break-words">{exercise.description}</p>
                             </div>
                           </Button>
                         ))}
