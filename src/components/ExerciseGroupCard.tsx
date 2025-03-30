@@ -75,7 +75,7 @@ export function ExerciseGroupCard({
           ))}
           {showCreateExercise && (
             <div 
-              className="bg-zinc-900 p-2 rounded-lg border border-zinc-800 cursor-pointer hover:bg-zinc-700"
+              className="bg-zinc-900 p-2 rounded-lg border border-zinc-800 cursor-pointer hover:bg-zinc-700 min-h-[68px]"
               onClick={() => onCreateExercise?.(group.id)}
             >
               <div className="h-full flex items-center justify-center gap-1">
