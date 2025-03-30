@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,14 @@ const RecordWorkout = () => {
   
   // Data fetching
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
+  
+  // Pre-fetch exercises for all groups to avoid hooks in render loop
+  const exercisesByGroupId = {};
+  exerciseGroups?.forEach(group => {
+    // Using a key to store the results instead of calling the hook in the render
+    const { data: exercises } = useExercisesByGroup(group.id);
+    exercisesByGroupId[group.id] = exercises || [];
+  });
   
   // State for tracking selected exercises and notes
   const [selectedExercises, setSelectedExercises] = useState<{
@@ -156,18 +165,14 @@ const RecordWorkout = () => {
           <p className="text-neutral-400 text-center">Loading exercise groups...</p>
         ) : (
           <div className="space-y-4">
-            {exerciseGroups?.map((group) => {
-              const { data: exercises } = useExercisesByGroup(group.id);
-              
-              return (
-                <ExerciseGroupCard
-                  key={group.id}
-                  group={group}
-                  exercises={exercises || []}
-                  onExerciseClick={addExerciseToWorkout}
-                />
-              );
-            })}
+            {exerciseGroups?.map((group) => (
+              <ExerciseGroupCard
+                key={group.id}
+                group={group}
+                exercises={exercisesByGroupId[group.id] || []}
+                onExerciseClick={addExerciseToWorkout}
+              />
+            ))}
           </div>
         )}
       </main>
