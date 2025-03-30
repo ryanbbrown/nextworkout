@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -119,7 +118,7 @@ const RecordWorkout = () => {
                 {selectedExercises.map((exercise) => (
                   <div 
                     key={exercise.id}
-                    className="p-3 bg-neutral-800 rounded-lg"
+                    className="p-3 bg-zinc-900 rounded-lg"
                   >
                     <div className="flex justify-between items-center cursor-pointer" 
                          onClick={() => removeSetOrExercise(exercise.id)}>
@@ -176,7 +175,7 @@ const RecordWorkout = () => {
                           <Button
                             key={exercise.id}
                             variant="outline"
-                            className="flex flex-col items-start h-20 text-left bg-neutral-800 hover:bg-neutral-700 border-0 rounded-lg p-3"
+                            className="flex flex-col items-start h-20 text-left bg-zinc-900 hover:bg-zinc-700 border-0 rounded-lg p-3"
                             onClick={() => addExerciseToWorkout(exercise)}
                           >
                             <h3 className="font-medium text-sm">{exercise.name}</h3>

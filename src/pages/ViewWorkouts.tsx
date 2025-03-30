@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -24,7 +23,7 @@ const ViewWorkouts = () => {
           workouts.map((workout) => (
             <Card 
               key={workout.id} 
-              className="rounded-xl border border-zinc-800 bg-transparent"
+              className="rounded-xl border border-zinc-800 bg-zinc-900"
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">
