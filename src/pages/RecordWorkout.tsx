@@ -175,7 +175,7 @@ const RecordWorkout = () => {
                           <Button
                             key={exercise.id}
                             variant="outline"
-                            className="flex flex-col items-start h-20 text-left bg-zinc-900 hover:bg-zinc-700 border-0 rounded-lg p-3"
+                            className="flex flex-col items-start h-20 text-left bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-lg p-3"
                             onClick={() => addExerciseToWorkout(exercise)}
                           >
                             <h3 className="font-medium text-sm">{exercise.name}</h3>

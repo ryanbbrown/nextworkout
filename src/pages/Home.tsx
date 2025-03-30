@@ -62,7 +62,7 @@ const Home = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             <Link to="/add-exercises">
-              <Card className="bg-background border border-zinc-800 rounded-xl hover:bg-zinc-900 transition-colors">
+              <Card className="bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <Plus className="h-5 w-5 mr-3 text-purple-500" />
                   <span>Add Exercises</span>
@@ -71,7 +71,7 @@ const Home = () => {
             </Link>
             
             <Link to="/record-workout">
-              <Card className="bg-background border border-zinc-800 rounded-xl hover:bg-zinc-900 transition-colors">
+              <Card className="bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <Dumbbell className="h-5 w-5 mr-3 text-purple-500" />
                   <span>Record Workout</span>
@@ -80,7 +80,7 @@ const Home = () => {
             </Link>
             
             <Link to="/view-workouts">
-              <Card className="bg-background border border-zinc-800 rounded-xl hover:bg-zinc-900 transition-colors">
+              <Card className="bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <History className="h-5 w-5 mr-3 text-purple-500" />
                   <span>View Workouts</span>
