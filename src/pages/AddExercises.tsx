@@ -281,10 +281,10 @@ const AddExercises = () => {
                           <Button
                             key={exercise.id}
                             variant="outline"
-                            className="flex flex-col items-start h-24 bg-zinc-900 hover:bg-zinc-700 text-left border border-zinc-800 rounded-xl relative p-1"
+                            className="flex flex-col items-start bg-zinc-900 hover:bg-zinc-700 text-left border border-zinc-800 rounded-xl relative p-2"
                             onClick={() => openEditExerciseModal(exercise)}
                           >
-                            <div className="w-full h-full flex flex-col justify-center gap-0.5">
+                            <div className="w-full flex flex-col gap-0.5">
                               <p className="font-medium text-sm text-left whitespace-normal break-words">{exercise.name}</p>
                               <p className="text-xs text-neutral-400 text-left whitespace-normal break-words line-clamp-2">{exercise.description}</p>
                             </div>
@@ -293,7 +293,7 @@ const AddExercises = () => {
                         
                         <Button
                           variant="outline"
-                          className="flex flex-col items-center justify-center h-24 bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-xl"
+                          className="flex flex-col items-center justify-center bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-xl p-2"
                           onClick={() => openCreateExerciseModal(group.id)}
                         >
                           <Plus className="h-6 w-6 mb-1" />
