@@ -7,6 +7,7 @@ import { useExerciseGroups } from "@/services/exerciseGroups";
 import { useExercises } from "@/services/exercises";
 import { format } from "date-fns";
 import { useMemo } from "react";
+import { ExerciseCard } from "@/components/ExerciseCard";
 
 const Home = () => {
   const { signOut, user } = useAuth();
@@ -109,14 +110,15 @@ const Home = () => {
                     ) : groupExercises[group.id]?.length > 0 ? (
                       <div className="mt-2 grid grid-cols-2 gap-2">
                         {groupExercises[group.id].map(exercise => (
-                          <div key={exercise.id} className="bg-zinc-900 p-2 rounded-lg border border-zinc-800">
-                            <p className="text-sm">{exercise.name}</p>
-                            <p className="text-xs text-zinc-400">
-                              {exercise.last_performed 
+                          <ExerciseCard
+                            key={exercise.id}
+                            name={exercise.name}
+                            secondaryText={
+                              exercise.last_performed
                                 ? `Last performed: ${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
-                                : 'Never performed'}
-                            </p>
-                          </div>
+                                : 'Never performed'
+                            }
+                          />
                         ))}
                       </div>
                     ) : (

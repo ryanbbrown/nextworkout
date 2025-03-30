@@ -9,6 +9,7 @@ import { useExercisesByGroup } from "@/services/exercises";
 import { useCreateWorkout } from "@/services/workouts";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { ExerciseCard } from "@/components/ExerciseCard";
 
 const RecordWorkout = () => {
   const { user } = useAuth();
@@ -172,15 +173,13 @@ const RecordWorkout = () => {
                     {exercises && exercises.length > 0 ? (
                       <div className="grid grid-cols-2 gap-2">
                         {exercises.map((exercise) => (
-                          <Button
+                          <ExerciseCard
                             key={exercise.id}
-                            variant="outline"
-                            className="flex flex-col items-start h-20 text-left bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-lg p-3"
+                            name={exercise.name}
+                            secondaryText={exercise.description}
                             onClick={() => addExerciseToWorkout(exercise)}
-                          >
-                            <h3 className="font-medium text-sm">{exercise.name}</h3>
-                            <p className="text-xs text-neutral-400">{exercise.description}</p>
-                          </Button>
+                            showAddButton
+                          />
                         ))}
                       </div>
                     ) : (

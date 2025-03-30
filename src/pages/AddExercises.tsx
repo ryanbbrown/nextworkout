@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useExerciseGroups, useCreateExerciseGroup, useUpdateExerciseGroup, useDeleteExerciseGroup, ExerciseGroup } from "@/services/exerciseGroups";
 import { useExercises, useExercisesByGroup, useCreateExercise, useUpdateExercise, useDeleteExercise, Exercise } from "@/services/exercises";
+import { ExerciseCard } from "@/components/ExerciseCard";
 
 const AddExercises = () => {
   const { user } = useAuth();
@@ -278,22 +279,17 @@ const AddExercises = () => {
                     {!isReordering && (
                       <div className="grid grid-cols-2 gap-2">
                         {getExercisesByGroup(group.id).map((exercise) => (
-                          <Button
+                          <ExerciseCard
                             key={exercise.id}
-                            variant="outline"
-                            className="flex flex-col items-start bg-zinc-900 hover:bg-zinc-700 text-left border border-zinc-800 rounded-lg p-4 w-full"
+                            name={exercise.name}
+                            secondaryText={exercise.description}
                             onClick={() => openEditExerciseModal(exercise)}
-                          >
-                            <div className="w-full flex flex-col gap-1">
-                              <p className="font-medium text-sm text-left whitespace-normal break-words">{exercise.name}</p>
-                              <p className="text-xs text-neutral-400 text-left whitespace-normal break-words line-clamp-2">{exercise.description}</p>
-                            </div>
-                          </Button>
+                          />
                         ))}
                         
                         <Button
                           variant="outline"
-                          className="flex flex-col items-center justify-center bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-lg p-4 w-full"
+                          className="flex flex-col items-center justify-center bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-lg p-2 w-full"
                           onClick={() => openCreateExerciseModal(group.id)}
                         >
                           <Plus className="h-6 w-6 mb-1" />
