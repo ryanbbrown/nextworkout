@@ -22,11 +22,20 @@ const Home = () => {
       // Filter exercises for this group
       const groupExercisesList = exercises.filter(e => e.group_id === group.id);
       
-      // Sort by last_performed (null values last, then oldest first)
+      // Sort by last_performed:
+      // 1. Null values first (never performed)
+      // 2. Then oldest first (least recently performed)
       const sortedExercises = [...groupExercisesList].sort((a, b) => {
-        if (!a.last_performed && !b.last_performed) return 0;
-        if (!a.last_performed) return 1;
-        if (!b.last_performed) return -1;
+        // If both have never been performed, sort by name
+        if (!a.last_performed && !b.last_performed) {
+          return a.name.localeCompare(b.name);
+        }
+        
+        // Prioritize exercises that have never been performed
+        if (!a.last_performed) return -1; // a should come first
+        if (!b.last_performed) return 1;  // b should come first
+        
+        // Both have been performed, sort by date (oldest first)
         return new Date(a.last_performed).getTime() - new Date(b.last_performed).getTime();
       });
       
