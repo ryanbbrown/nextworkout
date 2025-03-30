@@ -274,9 +274,9 @@ const AddExercises = () => {
                       </div>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-2">
                     {!isReordering && (
-                      <div className="grid grid-cols-3 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
                         {getExercisesByGroup(group.id).map((exercise) => (
                           <Button
                             key={exercise.id}
@@ -285,9 +285,9 @@ const AddExercises = () => {
                             onClick={() => openEditExerciseModal(exercise)}
                           >
                             <Pencil className="h-3 w-3 absolute top-2 right-2 text-neutral-500" />
-                            <div className="mt-2 text-center">
-                              <p className="font-medium text-sm line-clamp-2">{exercise.name}</p>
-                              <p className="text-xs text-neutral-400">{exercise.description}</p>
+                            <div className="mt-2 text-center w-full">
+                              <p className="font-medium text-sm line-clamp-2 break-words">{exercise.name}</p>
+                              <p className="text-xs text-neutral-400 line-clamp-2 break-words">{exercise.description}</p>
                             </div>
                           </Button>
                         ))}
