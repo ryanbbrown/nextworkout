@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useExerciseGroups, useCreateExerciseGroup, useUpdateExerciseGroup, useDeleteExerciseGroup, ExerciseGroup } from "@/services/exerciseGroups";
 import { useExercises, useExercisesByGroup, useCreateExercise, useUpdateExercise, useDeleteExercise, Exercise } from "@/services/exercises";
 import { ExerciseCard } from "@/components/ExerciseCard";
+import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
 
 const AddExercises = () => {
   const { user } = useAuth();
@@ -248,58 +249,18 @@ const AddExercises = () => {
           <div className="space-y-6">
             {exerciseGroups?.map((group) => (
               <div key={group.id} className="space-y-3">
-                <Card 
-                  className="rounded-xl bg-transparent border relative"
-                  style={{ borderColor: group.color }}
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex justify-between items-center" style={{ color: group.color }}>
-                      <span>{group.name}</span>
-                      <div className="flex space-x-1">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8"
-                          onClick={() => openEditGroupModal(group)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 text-red-500"
-                          onClick={() => handleDeleteGroup(group)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    {!isReordering && (
-                      <div className="grid grid-cols-2 gap-2">
-                        {getExercisesByGroup(group.id).map((exercise) => (
-                          <ExerciseCard
-                            key={exercise.id}
-                            name={exercise.name}
-                            secondaryText={exercise.description}
-                            onClick={() => openEditExerciseModal(exercise)}
-                          />
-                        ))}
-                        
-                        <div className="bg-zinc-900 p-2 rounded-lg border border-zinc-800 cursor-pointer hover:bg-zinc-700">
-                          <div 
-                            className="h-full flex items-center justify-center gap-1"
-                            onClick={() => openCreateExerciseModal(group.id)}
-                          >
-                            <Plus className="h-4 w-4" />
-                            <span className="text-xs">Create</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                {!isReordering && (
+                  <ExerciseGroupCard
+                    group={group}
+                    exercises={getExercisesByGroup(group.id)}
+                    showControls={true}
+                    onEditGroup={openEditGroupModal}
+                    onDeleteGroup={handleDeleteGroup}
+                    showCreateExercise={true}
+                    onCreateExercise={openCreateExerciseModal}
+                    onExerciseClick={openEditExerciseModal}
+                  />
+                )}
               </div>
             ))}
             

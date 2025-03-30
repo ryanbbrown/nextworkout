@@ -7,7 +7,7 @@ import { useExerciseGroups } from "@/services/exerciseGroups";
 import { useExercises } from "@/services/exercises";
 import { format } from "date-fns";
 import { useMemo } from "react";
-import { ExerciseCard } from "@/components/ExerciseCard";
+import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
 
 const Home = () => {
   const { signOut, user } = useAuth();
@@ -97,35 +97,17 @@ const Home = () => {
           ) : exerciseGroups && exerciseGroups.length > 0 ? (
             <div className="space-y-3">
               {exerciseGroups.map((group) => (
-                <Card 
-                  key={group.id} 
-                  className="rounded-xl bg-transparent border"
-                  style={{ borderColor: group.color }}
-                >
-                  <CardContent className="p-4">
-                    <h3 className="font-medium" style={{ color: group.color }}>{group.name}</h3>
-                    
-                    {loadingExercises ? (
-                      <p className="text-sm text-zinc-400">Loading exercises...</p>
-                    ) : groupExercises[group.id]?.length > 0 ? (
-                      <div className="mt-2 grid grid-cols-2 gap-2">
-                        {groupExercises[group.id].map(exercise => (
-                          <ExerciseCard
-                            key={exercise.id}
-                            name={exercise.name}
-                            secondaryText={
-                              exercise.last_performed
-                                ? `Last performed: ${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
-                                : 'Never performed'
-                            }
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-zinc-400 mt-2">No exercises in this group yet</p>
-                    )}
-                  </CardContent>
-                </Card>
+                <ExerciseGroupCard
+                  key={group.id}
+                  group={group}
+                  exercises={groupExercises[group.id] || []}
+                  maxExercises={group.num_exercises_to_show}
+                  renderExerciseSecondaryText={(exercise) => 
+                    exercise.last_performed
+                      ? `Last performed: ${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
+                      : 'Never performed'
+                  }
+                />
               ))}
             </div>
           ) : (

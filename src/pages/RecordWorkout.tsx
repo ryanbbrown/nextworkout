@@ -9,7 +9,7 @@ import { useExercisesByGroup } from "@/services/exercises";
 import { useCreateWorkout } from "@/services/workouts";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
-import { ExerciseCard } from "@/components/ExerciseCard";
+import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
 
 const RecordWorkout = () => {
   const { user } = useAuth();
@@ -157,35 +157,15 @@ const RecordWorkout = () => {
         ) : (
           <div className="space-y-4">
             {exerciseGroups?.map((group) => {
-              // Get exercises for this group using the hook
               const { data: exercises } = useExercisesByGroup(group.id);
               
               return (
-                <Card 
-                  key={group.id} 
-                  className="rounded-xl border bg-transparent"
-                  style={{ borderColor: group.color }}
-                >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg" style={{ color: group.color }}>{group.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {exercises && exercises.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {exercises.map((exercise) => (
-                          <ExerciseCard
-                            key={exercise.id}
-                            name={exercise.name}
-                            secondaryText={exercise.description}
-                            onClick={() => addExerciseToWorkout(exercise)}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-neutral-400">No exercises in this group yet</p>
-                    )}
-                  </CardContent>
-                </Card>
+                <ExerciseGroupCard
+                  key={group.id}
+                  group={group}
+                  exercises={exercises || []}
+                  onExerciseClick={addExerciseToWorkout}
+                />
               );
             })}
           </div>
