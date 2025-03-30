@@ -274,35 +274,36 @@ const AddExercises = () => {
                       </div>
                     </CardTitle>
                   </CardHeader>
+                  <CardContent>
+                    {!isReordering && (
+                      <div className="grid grid-cols-3 gap-3">
+                        {getExercisesByGroup(group.id).map((exercise) => (
+                          <Button
+                            key={exercise.id}
+                            variant="outline"
+                            className="flex flex-col items-center h-24 bg-zinc-900 hover:bg-zinc-700 text-left border border-zinc-800 rounded-xl relative p-3"
+                            onClick={() => openEditExerciseModal(exercise)}
+                          >
+                            <Pencil className="h-3 w-3 absolute top-2 right-2 text-neutral-500" />
+                            <div className="mt-2 text-center">
+                              <p className="font-medium text-sm line-clamp-2">{exercise.name}</p>
+                              <p className="text-xs text-neutral-400">{exercise.description}</p>
+                            </div>
+                          </Button>
+                        ))}
+                        
+                        <Button
+                          variant="outline"
+                          className="flex flex-col items-center justify-center h-24 bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-xl"
+                          onClick={() => openCreateExerciseModal(group.id)}
+                        >
+                          <Plus className="h-6 w-6 mb-1" />
+                          <span className="text-xs">Create Exercise</span>
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
                 </Card>
-                
-                {!isReordering && (
-                  <div className="grid grid-cols-3 gap-3">
-                    {getExercisesByGroup(group.id).map((exercise) => (
-                      <Button
-                        key={exercise.id}
-                        variant="outline"
-                        className="flex flex-col items-center h-24 bg-zinc-900 hover:bg-zinc-700 text-left border border-zinc-800 rounded-xl relative p-3"
-                        onClick={() => openEditExerciseModal(exercise)}
-                      >
-                        <Pencil className="h-3 w-3 absolute top-2 right-2 text-neutral-500" />
-                        <div className="mt-2 text-center">
-                          <p className="font-medium text-sm line-clamp-2">{exercise.name}</p>
-                          <p className="text-xs text-neutral-400">{exercise.description}</p>
-                        </div>
-                      </Button>
-                    ))}
-                    
-                    <Button
-                      variant="outline"
-                      className="flex flex-col items-center justify-center h-24 bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-xl"
-                      onClick={() => openCreateExerciseModal(group.id)}
-                    >
-                      <Plus className="h-6 w-6 mb-1" />
-                      <span className="text-xs">Create Exercise</span>
-                    </Button>
-                  </div>
-                )}
               </div>
             ))}
             
