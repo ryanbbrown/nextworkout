@@ -6,11 +6,11 @@ import { ArrowLeft, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
-import { useExercisesByGroup } from "@/services/exercises";
 import { useCreateWorkout } from "@/services/workouts";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
+import { useExercisesForGroups } from "@/hooks/useExercisesForGroups";
 
 const RecordWorkout = () => {
   const { user } = useAuth();
@@ -19,19 +19,7 @@ const RecordWorkout = () => {
   
   // Data fetching
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
-  
-  // Pre-fetch exercises for all groups to avoid hooks in render loop
-  const exercisesByGroupId = {};
-  if (exerciseGroups) {
-    // We need to create a fixed array of group IDs first, not inside the render loop
-    const groupIds = exerciseGroups.map(group => group.id);
-    
-    // Now we can safely iterate through our array of IDs
-    groupIds.forEach(groupId => {
-      const { data: exercises } = useExercisesByGroup(groupId);
-      exercisesByGroupId[groupId] = exercises || [];
-    });
-  }
+  const { exercisesByGroupId, loading: loadingExercises } = useExercisesForGroups(exerciseGroups);
   
   // State for tracking selected exercises and notes
   const [selectedExercises, setSelectedExercises] = useState<{
@@ -166,8 +154,8 @@ const RecordWorkout = () => {
         </Card>
 
         {/* Exercise Groups */}
-        {loadingGroups ? (
-          <p className="text-neutral-400 text-center">Loading exercise groups...</p>
+        {loadingGroups || loadingExercises ? (
+          <p className="text-neutral-400 text-center">Loading exercises...</p>
         ) : (
           <div className="space-y-4">
             {exerciseGroups?.map((group) => (
