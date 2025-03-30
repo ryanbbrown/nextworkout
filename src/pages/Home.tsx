@@ -46,7 +46,7 @@ const Home = () => {
   }, [exerciseGroups, exercises]);
   
   return (
-    <div className="min-h-screen bg-zinc-950 text-foreground flex flex-col">
+    <div className="min-h-screen bg-black text-foreground flex flex-col">
       <header className="p-4 border-b border-zinc-800 flex justify-between items-center">
         <h1 className="text-xl font-bold">NextWorkout</h1>
         <Button
