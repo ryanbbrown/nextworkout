@@ -17,16 +17,15 @@ export function ExerciseCard({
   showAddButton = false,
 }: ExerciseCardProps) {
   return (
-    <Button
-      variant="outline"
-      className={`flex flex-col items-start bg-zinc-900 hover:bg-zinc-700 text-left border border-zinc-800 rounded-lg p-2 w-full ${className}`}
+    <div
+      className={`bg-zinc-900 p-2 rounded-lg border border-zinc-800 ${className} ${onClick ? 'cursor-pointer hover:bg-zinc-700' : ''}`}
       onClick={onClick}
     >
-      <p className="font-medium text-sm">{name}</p>
+      <p className="text-sm font-medium">{name}</p>
       <p className="text-xs text-zinc-400">{secondaryText}</p>
       {showAddButton && (
         <div className="mt-1 text-xs text-zinc-400">Click to add set</div>
       )}
-    </Button>
+    </div>
   );
 } 
