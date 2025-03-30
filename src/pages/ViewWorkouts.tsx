@@ -142,7 +142,7 @@ const ViewWorkouts = () => {
 
       {/* Edit Workout Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto">
+        <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto rounded-xl">
           <DialogHeader>
             <DialogTitle>Edit Workout</DialogTitle>
             <DialogDescription className="text-zinc-400">
