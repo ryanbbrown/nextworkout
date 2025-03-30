@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from 'react';
-import { useExercisesByGroup } from '@/services/exercises';
 import { ExerciseGroup } from '@/services/exerciseGroups';
+import { supabase } from '@/lib/supabase';
+import { Exercise } from '@/services/exercises';
 
 // Custom hook to fetch exercises for all groups
 export function useExercisesForGroups(groups: ExerciseGroup[] | undefined) {
-  const [exercisesByGroupId, setExercisesByGroupId] = useState<Record<string, any>>({});
+  const [exercisesByGroupId, setExercisesByGroupId] = useState<Record<string, Exercise[]>>({});
   const [loading, setLoading] = useState(true);
 
   // Update exercises when groups change
@@ -16,24 +17,43 @@ export function useExercisesForGroups(groups: ExerciseGroup[] | undefined) {
         return;
       }
 
-      const exercisesMap: Record<string, any> = {};
-      let allFetched = true;
-
-      // We need to individually fetch each group's exercises
-      for (const group of groups) {
-        try {
-          const result = await fetch(`/api/exercises?group_id=${group.id}`);
-          const data = await result.json();
-          exercisesMap[group.id] = data;
-        } catch (error) {
-          console.error(`Error fetching exercises for group ${group.id}:`, error);
-          exercisesMap[group.id] = [];
-          allFetched = false;
+      const exercisesMap: Record<string, Exercise[]> = {};
+      
+      try {
+        // Fetch all exercises at once, then organize by group
+        const { data, error } = await supabase
+          .from('exercises')
+          .select('*')
+          .in('group_id', groups.map(group => group.id))
+          .order('name');
+          
+        if (error) {
+          console.error('Error fetching exercises:', error);
+          setLoading(false);
+          return;
         }
+        
+        // Organize exercises by group ID
+        const exercises = data as Exercise[];
+        
+        // Initialize empty arrays for all groups
+        groups.forEach(group => {
+          exercisesMap[group.id] = [];
+        });
+        
+        // Fill in exercises for each group
+        exercises.forEach(exercise => {
+          if (exercisesMap[exercise.group_id]) {
+            exercisesMap[exercise.group_id].push(exercise);
+          }
+        });
+        
+        setExercisesByGroupId(exercisesMap);
+      } catch (error) {
+        console.error('Error fetching exercises:', error);
+      } finally {
+        setLoading(false);
       }
-
-      setExercisesByGroupId(exercisesMap);
-      setLoading(false);
     };
 
     setLoading(true);
