@@ -276,7 +276,7 @@ const AddExercises = () => {
                   </CardHeader>
                   <CardContent className="px-2">
                     {!isReordering && (
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-3 gap-2">
                         {getExercisesByGroup(group.id).map((exercise) => (
                           <Button
                             key={exercise.id}
