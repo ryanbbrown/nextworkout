@@ -90,7 +90,7 @@ const Home = () => {
             </Link>
           </div>
           
-          <h2 className="text-lg font-semibold mt-6 mb-2">Recent Exercise Groups</h2>
+          <h2 className="text-lg font-semibold mt-6 mb-2">Focus Exercises</h2>
           
           {loadingGroups ? (
             <p className="text-zinc-400 text-sm">Loading exercise groups...</p>
