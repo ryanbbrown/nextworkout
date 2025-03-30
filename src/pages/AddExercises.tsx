@@ -349,8 +349,7 @@ const AddExercises = () => {
               </div>
             </div>
           </div>
-          <DialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <Button variant="ghost" onClick={() => setShowCreateGroupModal(false)} className="w-1/2">Cancel</Button>
+          <DialogFooter className="flex justify-center">
             <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleCreateGroup}>
               Create Group
             </Button>
@@ -388,8 +387,7 @@ const AddExercises = () => {
               </div>
             </div>
           </div>
-          <DialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <Button variant="ghost" onClick={() => setShowEditGroupModal(false)} className="w-1/2">Cancel</Button>
+          <DialogFooter className="flex justify-center">
             <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleEditGroup}>
               Save Changes
             </Button>
@@ -424,8 +422,7 @@ const AddExercises = () => {
               />
             </div>
           </div>
-          <DialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <Button variant="ghost" onClick={() => setShowCreateExerciseModal(false)} className="w-1/2">Cancel</Button>
+          <DialogFooter className="flex justify-center">
             <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleCreateExercise}>
               Create Exercise
             </Button>
@@ -471,12 +468,9 @@ const AddExercises = () => {
             >
               Delete
             </Button>
-            <div className="flex justify-center gap-4 w-full">
-              <Button variant="ghost" onClick={() => setShowEditExerciseModal(false)} className="w-1/2">Cancel</Button>
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleEditExercise}>
-                Save Changes
-              </Button>
-            </div>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleEditExercise}>
+              Save Changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
