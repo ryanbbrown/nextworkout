@@ -97,7 +97,7 @@ const RecordWorkout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="p-4 border-b border-gray-800 flex items-center">
         <Link to="/home" className="mr-4">
           <ArrowLeft className="h-5 w-5" />
@@ -107,7 +107,7 @@ const RecordWorkout = () => {
 
       <main className="flex-1 max-w-md mx-auto w-full p-4 space-y-6">
         {/* This Workout Section */}
-        <Card className="rounded-xl border-0 bg-gray-800">
+        <Card className="rounded-xl border border-gray-800 bg-background">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">This Workout</CardTitle>
           </CardHeader>
@@ -119,7 +119,7 @@ const RecordWorkout = () => {
                 {selectedExercises.map((exercise) => (
                   <div 
                     key={exercise.id}
-                    className="p-3 bg-gray-700 rounded-lg"
+                    className="p-3 bg-gray-900 rounded-lg"
                   >
                     <div className="flex justify-between items-center cursor-pointer" 
                          onClick={() => removeSetOrExercise(exercise.id)}>
@@ -133,7 +133,7 @@ const RecordWorkout = () => {
 
                 <Textarea
                   placeholder="Workout notes (optional)"
-                  className="w-full mt-4 bg-gray-700 border-gray-600"
+                  className="w-full mt-4 bg-gray-900 border-gray-800"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                 />
@@ -163,11 +163,11 @@ const RecordWorkout = () => {
               return (
                 <Card 
                   key={group.id} 
-                  className="rounded-xl border-0"
-                  style={{ backgroundColor: `${group.color}30` /* Add transparency */ }}
+                  className="rounded-xl bg-background border"
+                  style={{ borderColor: group.color }}
                 >
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{group.name}</CardTitle>
+                    <CardTitle className="text-lg" style={{ color: group.color }}>{group.name}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {exercises && exercises.length > 0 ? (
@@ -176,7 +176,7 @@ const RecordWorkout = () => {
                           <Button
                             key={exercise.id}
                             variant="outline"
-                            className="flex flex-col items-start h-20 text-left bg-gray-800 hover:bg-gray-700 border-0 rounded-lg p-3"
+                            className="flex flex-col items-start h-20 text-left bg-gray-900 hover:bg-gray-800 border-0 rounded-lg p-3"
                             onClick={() => addExerciseToWorkout(exercise)}
                           >
                             <h3 className="font-medium text-sm">{exercise.name}</h3>

@@ -46,7 +46,7 @@ const Home = () => {
   }, [exerciseGroups, exercises]);
   
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="p-4 border-b border-gray-800 flex justify-between items-center">
         <h1 className="text-xl font-bold">NextWorkout</h1>
         <Button
@@ -63,7 +63,7 @@ const Home = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             <Link to="/add-exercises">
-              <Card className="bg-gray-800 border-0 rounded-xl hover:bg-gray-700 transition-colors">
+              <Card className="bg-background border border-gray-800 rounded-xl hover:bg-gray-900 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <Plus className="h-5 w-5 mr-3 text-purple-500" />
                   <span>Add Exercises</span>
@@ -72,7 +72,7 @@ const Home = () => {
             </Link>
             
             <Link to="/record-workout">
-              <Card className="bg-gray-800 border-0 rounded-xl hover:bg-gray-700 transition-colors">
+              <Card className="bg-background border border-gray-800 rounded-xl hover:bg-gray-900 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <Dumbbell className="h-5 w-5 mr-3 text-purple-500" />
                   <span>Record Workout</span>
@@ -81,7 +81,7 @@ const Home = () => {
             </Link>
             
             <Link to="/view-workouts">
-              <Card className="bg-gray-800 border-0 rounded-xl hover:bg-gray-700 transition-colors">
+              <Card className="bg-background border border-gray-800 rounded-xl hover:bg-gray-900 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <History className="h-5 w-5 mr-3 text-purple-500" />
                   <span>View Workouts</span>
@@ -99,18 +99,18 @@ const Home = () => {
               {exerciseGroups.map((group) => (
                 <Card 
                   key={group.id} 
-                  className="rounded-xl border-0"
-                  style={{ backgroundColor: `${group.color}30` /* Add transparency */ }}
+                  className="rounded-xl bg-background border"
+                  style={{ borderColor: group.color }}
                 >
                   <CardContent className="p-4">
-                    <h3 className="font-medium">{group.name}</h3>
+                    <h3 className="font-medium" style={{ color: group.color }}>{group.name}</h3>
                     
                     {loadingExercises ? (
                       <p className="text-sm text-gray-400">Loading exercises...</p>
                     ) : groupExercises[group.id]?.length > 0 ? (
                       <div className="mt-2 space-y-2">
                         {groupExercises[group.id].map(exercise => (
-                          <div key={exercise.id} className="bg-gray-800 bg-opacity-50 p-2 rounded-lg">
+                          <div key={exercise.id} className="bg-gray-900 p-2 rounded-lg">
                             <p className="text-sm">{exercise.name}</p>
                             <p className="text-xs text-gray-400">
                               {exercise.last_performed 
