@@ -109,7 +109,7 @@ const Home = () => {
                     ) : groupExercises[group.id]?.length > 0 ? (
                       <div className="mt-2 space-y-2">
                         {groupExercises[group.id].map(exercise => (
-                          <div key={exercise.id} className="bg-zinc-900 p-2 rounded-lg">
+                          <div key={exercise.id} className="bg-zinc-900 p-2 rounded-lg border border-zinc-800">
                             <p className="text-sm">{exercise.name}</p>
                             <p className="text-xs text-zinc-400">
                               {exercise.last_performed 
