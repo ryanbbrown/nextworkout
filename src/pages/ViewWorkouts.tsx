@@ -34,8 +34,7 @@ const ViewWorkouts = () => {
   // Handle opening edit dialog
   const handleEditWorkout = (workout: any) => {
     setSelectedWorkout(workout);
-    // Use workout_date if available, fallback to created_at
-    setSelectedDate(new Date(workout.workout_date || workout.created_at));
+    setSelectedDate(new Date(workout.workout_date));
     
     // Initialize exercise updates with current values
     if (workout.workout_exercises) {
@@ -101,7 +100,7 @@ const ViewWorkouts = () => {
             >
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">
-                  {format(new Date(workout.workout_date || workout.created_at), 'EEEE, MMMM d, yyyy')}
+                  {format(new Date(workout.workout_date), 'EEEE, MMMM d, yyyy')}
                 </CardTitle>
                 <Button 
                   variant="ghost" 
