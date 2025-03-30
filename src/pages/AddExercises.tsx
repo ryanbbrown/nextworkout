@@ -319,7 +319,7 @@ const AddExercises = () => {
       </main>
 
       <Dialog open={showCreateGroupModal} onOpenChange={setShowCreateGroupModal}>
-        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
+        <DialogContent className="bg-zinc-900 text-white border-zinc-800 rounded-xl w-[95%] max-w-lg mx-auto">
           <DialogHeader>
             <DialogTitle>Create Exercise Group</DialogTitle>
           </DialogHeader>
@@ -331,7 +331,7 @@ const AddExercises = () => {
                 value={newGroupName} 
                 onChange={(e) => setNewGroupName(e.target.value)} 
                 placeholder="e.g., Upper Body"
-                className="bg-neutral-700 border-neutral-600 text-white"
+                className="bg-zinc-800 border-zinc-700 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -349,9 +349,9 @@ const AddExercises = () => {
               </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowCreateGroupModal(false)}>Cancel</Button>
-            <Button className="bg-purple-600 hover:bg-purple-700" onClick={handleCreateGroup}>
+          <DialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <Button variant="ghost" onClick={() => setShowCreateGroupModal(false)} className="w-1/2">Cancel</Button>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleCreateGroup}>
               Create Group
             </Button>
           </DialogFooter>
@@ -359,7 +359,7 @@ const AddExercises = () => {
       </Dialog>
 
       <Dialog open={showEditGroupModal} onOpenChange={setShowEditGroupModal}>
-        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
+        <DialogContent className="bg-zinc-900 text-white border-zinc-800 rounded-xl w-[95%] max-w-lg mx-auto">
           <DialogHeader>
             <DialogTitle>Edit Exercise Group</DialogTitle>
           </DialogHeader>
@@ -370,7 +370,7 @@ const AddExercises = () => {
                 id="edit-group-name" 
                 value={editGroupName} 
                 onChange={(e) => setEditGroupName(e.target.value)} 
-                className="bg-neutral-700 border-neutral-600 text-white"
+                className="bg-zinc-800 border-zinc-700 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -388,9 +388,9 @@ const AddExercises = () => {
               </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowEditGroupModal(false)}>Cancel</Button>
-            <Button className="bg-purple-600 hover:bg-purple-700" onClick={handleEditGroup}>
+          <DialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <Button variant="ghost" onClick={() => setShowEditGroupModal(false)} className="w-1/2">Cancel</Button>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleEditGroup}>
               Save Changes
             </Button>
           </DialogFooter>
@@ -398,7 +398,7 @@ const AddExercises = () => {
       </Dialog>
 
       <Dialog open={showCreateExerciseModal} onOpenChange={setShowCreateExerciseModal}>
-        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
+        <DialogContent className="bg-zinc-900 text-white border-zinc-800 rounded-xl w-[95%] max-w-lg mx-auto">
           <DialogHeader>
             <DialogTitle>Create Exercise</DialogTitle>
           </DialogHeader>
@@ -410,7 +410,7 @@ const AddExercises = () => {
                 value={newExerciseName} 
                 onChange={(e) => setNewExerciseName(e.target.value)} 
                 placeholder="e.g., Push-ups"
-                className="bg-neutral-700 border-neutral-600 text-white"
+                className="bg-zinc-800 border-zinc-700 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -420,13 +420,13 @@ const AddExercises = () => {
                 value={newExerciseDescription} 
                 onChange={(e) => setNewExerciseDescription(e.target.value)} 
                 placeholder="e.g., 3x10"
-                className="bg-neutral-700 border-neutral-600 text-white"
+                className="bg-zinc-800 border-zinc-700 text-white"
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowCreateExerciseModal(false)}>Cancel</Button>
-            <Button className="bg-purple-600 hover:bg-purple-700" onClick={handleCreateExercise}>
+          <DialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <Button variant="ghost" onClick={() => setShowCreateExerciseModal(false)} className="w-1/2">Cancel</Button>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleCreateExercise}>
               Create Exercise
             </Button>
           </DialogFooter>
@@ -434,7 +434,7 @@ const AddExercises = () => {
       </Dialog>
 
       <Dialog open={showEditExerciseModal} onOpenChange={setShowEditExerciseModal}>
-        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
+        <DialogContent className="bg-zinc-900 text-white border-zinc-800 rounded-xl w-[95%] max-w-lg mx-auto">
           <DialogHeader>
             <DialogTitle>Edit Exercise</DialogTitle>
           </DialogHeader>
@@ -445,7 +445,7 @@ const AddExercises = () => {
                 id="edit-exercise-name" 
                 value={editExerciseName} 
                 onChange={(e) => setEditExerciseName(e.target.value)} 
-                className="bg-neutral-700 border-neutral-600 text-white"
+                className="bg-zinc-800 border-zinc-700 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -454,15 +454,14 @@ const AddExercises = () => {
                 id="edit-exercise-description" 
                 value={editExerciseDescription} 
                 onChange={(e) => setEditExerciseDescription(e.target.value)} 
-                className="bg-neutral-700 border-neutral-600 text-white"
+                className="bg-zinc-800 border-zinc-700 text-white"
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowEditExerciseModal(false)}>Cancel</Button>
+          <DialogFooter className="flex flex-col gap-4 items-center">
             <Button 
               variant="destructive" 
-              className="mr-auto"
+              className="w-1/2"
               onClick={() => {
                 if (currentExercise) {
                   handleDeleteExercise(currentExercise);
@@ -472,9 +471,12 @@ const AddExercises = () => {
             >
               Delete
             </Button>
-            <Button className="bg-purple-600 hover:bg-purple-700" onClick={handleEditExercise}>
-              Save Changes
-            </Button>
+            <div className="flex justify-center gap-4 w-full">
+              <Button variant="ghost" onClick={() => setShowEditExerciseModal(false)} className="w-1/2">Cancel</Button>
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white w-1/2" onClick={handleEditExercise}>
+                Save Changes
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -42,13 +41,13 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center px-4">
-      <Card className="w-full max-w-md bg-gray-800 border-gray-700 rounded-xl">
+    <div className="min-h-screen bg-background text-white flex flex-col items-center justify-center px-4">
+      <Card className="w-full max-w-md bg-zinc-900 border-zinc-800 rounded-xl">
         <CardHeader>
           <CardTitle className="text-xl">
             {mode === "signin" ? "Sign in" : "Create an account"}
           </CardTitle>
-          <CardDescription className="text-gray-400">
+          <CardDescription className="text-zinc-400">
             {mode === "signin" 
               ? "Enter your email and password to access your account" 
               : "Fill out the form below to create your account"}
@@ -65,7 +64,7 @@ const Auth = () => {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input 
-                        className="bg-gray-700 border-gray-600" 
+                        className="bg-zinc-800 border-zinc-700" 
                         placeholder="email@example.com" 
                         {...field} 
                       />
@@ -82,7 +81,7 @@ const Auth = () => {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input 
-                        className="bg-gray-700 border-gray-600" 
+                        className="bg-zinc-800 border-zinc-700" 
                         type="password" 
                         placeholder="••••••••" 
                         {...field} 
@@ -94,7 +93,7 @@ const Auth = () => {
               />
               <Button 
                 type="submit" 
-                className="w-full py-6 text-lg rounded-xl bg-purple-600 hover:bg-purple-700"
+                className="w-full py-6 text-lg rounded-xl bg-purple-600 hover:bg-purple-700 text-white"
                 disabled={isLoading}
               >
                 {isLoading ? "Loading..." : mode === "signin" ? "Sign in" : "Sign up"}

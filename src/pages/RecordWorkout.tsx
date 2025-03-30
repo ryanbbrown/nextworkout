@@ -118,7 +118,7 @@ const RecordWorkout = () => {
                 {selectedExercises.map((exercise) => (
                   <div 
                     key={exercise.id}
-                    className="p-3 bg-zinc-900 rounded-lg"
+                    className="bg-zinc-900 border border-zinc-800 rounded-xl p-3"
                   >
                     <div className="flex justify-between items-center cursor-pointer" 
                          onClick={() => removeSetOrExercise(exercise.id)}>
@@ -132,13 +132,13 @@ const RecordWorkout = () => {
 
                 <Textarea
                   placeholder="Workout notes (optional)"
-                  className="w-full mt-4 bg-neutral-800 border-neutral-700"
+                  className="w-full mt-4 bg-zinc-900 border-zinc-800"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                 />
 
                 <Button 
-                  className="w-full mt-4 bg-green-600 hover:bg-green-700"
+                  className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white"
                   onClick={handleSaveWorkout}
                   disabled={createWorkoutMutation.isPending}
                 >
