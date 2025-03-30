@@ -289,11 +289,11 @@ const AddExercises = () => {
                         
                         <div className="bg-zinc-900 p-2 rounded-lg border border-zinc-800 cursor-pointer hover:bg-zinc-700">
                           <div 
-                            className="h-full flex flex-col items-center justify-center"
+                            className="h-full flex items-center justify-center gap-1"
                             onClick={() => openCreateExerciseModal(group.id)}
                           >
-                            <Plus className="h-6 w-6 mb-1" />
-                            <span className="text-xs">Create Exercise</span>
+                            <Plus className="h-4 w-4" />
+                            <span className="text-xs">Create</span>
                           </div>
                         </div>
                       </div>
