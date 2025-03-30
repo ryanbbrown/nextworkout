@@ -203,7 +203,7 @@ const AddExercises = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-foreground flex flex-col">
+    <div className="min-h-screen bg-zinc-900 text-foreground flex flex-col">
       <header className="p-4 border-b border-neutral-800 flex items-center">
         <Link to="/home" className="mr-4">
           <ArrowLeft className="h-5 w-5" />
