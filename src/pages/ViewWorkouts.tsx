@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -33,7 +34,8 @@ const ViewWorkouts = () => {
   // Handle opening edit dialog
   const handleEditWorkout = (workout: any) => {
     setSelectedWorkout(workout);
-    setSelectedDate(new Date(workout.created_at));
+    // Use workout_date if available, fallback to created_at
+    setSelectedDate(new Date(workout.workout_date || workout.created_at));
     
     // Initialize exercise updates with current values
     if (workout.workout_exercises) {
@@ -99,7 +101,7 @@ const ViewWorkouts = () => {
             >
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">
-                  {format(new Date(workout.created_at), 'EEEE, MMMM d, yyyy')}
+                  {format(new Date(workout.workout_date || workout.created_at), 'EEEE, MMMM d, yyyy')}
                 </CardTitle>
                 <Button 
                   variant="ghost" 

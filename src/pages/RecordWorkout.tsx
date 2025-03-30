@@ -78,13 +78,16 @@ const RecordWorkout = () => {
       user_id: user?.id || ''
     }));
     
+    const now = new Date();
+    
     // Create the workout
     createWorkoutMutation.mutate({
       workout: {
         user_id: user?.id || '',
         notes: notes.trim() || null,
-        created_at: new Date().toISOString(),
-        updated_at: null
+        created_at: now.toISOString(),
+        updated_at: null,
+        workout_date: now.toISOString()
       },
       workoutExercises
     }, {

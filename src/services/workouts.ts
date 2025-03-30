@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Exercise } from './exercises';
@@ -19,6 +20,7 @@ export interface Workout {
   created_at: string;
   updated_at: string | null;
   notes: string | null;
+  workout_date: string; // New field for the workout date
   workout_exercises?: WorkoutExercise[];
 }
 
@@ -33,7 +35,7 @@ export const fetchWorkouts = async () => {
         exercise:exercises(*)
       )
     `)
-    .order('created_at', { ascending: false });
+    .order('workout_date', { ascending: false });
   
   if (error) {
     console.error('Error fetching workouts:', error);
@@ -105,7 +107,7 @@ export const updateWorkout = async ({
     const { error: workoutError } = await supabase
       .from('workouts')
       .update({ 
-        created_at: newDate.toISOString(),
+        workout_date: newDate.toISOString(),
         updated_at: new Date().toISOString()
       })
       .eq('id', workoutId);
