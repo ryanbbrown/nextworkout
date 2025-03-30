@@ -22,11 +22,16 @@ const RecordWorkout = () => {
   
   // Pre-fetch exercises for all groups to avoid hooks in render loop
   const exercisesByGroupId = {};
-  exerciseGroups?.forEach(group => {
-    // Using a key to store the results instead of calling the hook in the render
-    const { data: exercises } = useExercisesByGroup(group.id);
-    exercisesByGroupId[group.id] = exercises || [];
-  });
+  if (exerciseGroups) {
+    // We need to create a fixed array of group IDs first, not inside the render loop
+    const groupIds = exerciseGroups.map(group => group.id);
+    
+    // Now we can safely iterate through our array of IDs
+    groupIds.forEach(groupId => {
+      const { data: exercises } = useExercisesByGroup(groupId);
+      exercisesByGroupId[groupId] = exercises || [];
+    });
+  }
   
   // State for tracking selected exercises and notes
   const [selectedExercises, setSelectedExercises] = useState<{
