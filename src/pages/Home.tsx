@@ -46,14 +46,14 @@ const Home = () => {
   }, [exerciseGroups, exercises]);
   
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <header className="p-4 border-b border-gray-800 flex justify-between items-center">
+    <div className="min-h-screen bg-zinc-950 text-foreground flex flex-col">
+      <header className="p-4 border-b border-zinc-800 flex justify-between items-center">
         <h1 className="text-xl font-bold">NextWorkout</h1>
         <Button
           variant="ghost"
           size="icon"
           onClick={signOut}
-          className="text-gray-400 hover:text-white"
+          className="text-zinc-400 hover:text-white"
         >
           <LogOut className="h-5 w-5" />
         </Button>
@@ -63,7 +63,7 @@ const Home = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             <Link to="/add-exercises">
-              <Card className="bg-background border border-gray-800 rounded-xl hover:bg-gray-900 transition-colors">
+              <Card className="bg-zinc-950 border border-zinc-800 rounded-xl hover:bg-zinc-900 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <Plus className="h-5 w-5 mr-3 text-purple-500" />
                   <span>Add Exercises</span>
@@ -72,7 +72,7 @@ const Home = () => {
             </Link>
             
             <Link to="/record-workout">
-              <Card className="bg-background border border-gray-800 rounded-xl hover:bg-gray-900 transition-colors">
+              <Card className="bg-zinc-950 border border-zinc-800 rounded-xl hover:bg-zinc-900 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <Dumbbell className="h-5 w-5 mr-3 text-purple-500" />
                   <span>Record Workout</span>
@@ -81,7 +81,7 @@ const Home = () => {
             </Link>
             
             <Link to="/view-workouts">
-              <Card className="bg-background border border-gray-800 rounded-xl hover:bg-gray-900 transition-colors">
+              <Card className="bg-zinc-950 border border-zinc-800 rounded-xl hover:bg-zinc-900 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <History className="h-5 w-5 mr-3 text-purple-500" />
                   <span>View Workouts</span>
@@ -93,26 +93,26 @@ const Home = () => {
           <h2 className="text-lg font-semibold mt-6 mb-2">Recent Exercise Groups</h2>
           
           {loadingGroups ? (
-            <p className="text-gray-400 text-sm">Loading exercise groups...</p>
+            <p className="text-zinc-400 text-sm">Loading exercise groups...</p>
           ) : exerciseGroups && exerciseGroups.length > 0 ? (
             <div className="space-y-3">
               {exerciseGroups.map((group) => (
                 <Card 
                   key={group.id} 
-                  className="rounded-xl bg-background border"
+                  className="rounded-xl bg-transparent border"
                   style={{ borderColor: group.color }}
                 >
                   <CardContent className="p-4">
                     <h3 className="font-medium" style={{ color: group.color }}>{group.name}</h3>
                     
                     {loadingExercises ? (
-                      <p className="text-sm text-gray-400">Loading exercises...</p>
+                      <p className="text-sm text-zinc-400">Loading exercises...</p>
                     ) : groupExercises[group.id]?.length > 0 ? (
                       <div className="mt-2 space-y-2">
                         {groupExercises[group.id].map(exercise => (
-                          <div key={exercise.id} className="bg-gray-900 p-2 rounded-lg">
+                          <div key={exercise.id} className="bg-zinc-900 p-2 rounded-lg">
                             <p className="text-sm">{exercise.name}</p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-zinc-400">
                               {exercise.last_performed 
                                 ? `Last performed: ${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
                                 : 'Never performed'}
@@ -121,14 +121,14 @@ const Home = () => {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-400 mt-2">No exercises in this group yet</p>
+                      <p className="text-sm text-zinc-400 mt-2">No exercises in this group yet</p>
                     )}
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">
+            <p className="text-zinc-400 text-sm">
               You don't have any exercise groups yet. Add some exercises to get started!
             </p>
           )}
