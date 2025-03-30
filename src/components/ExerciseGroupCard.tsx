@@ -38,8 +38,8 @@ export function ExerciseGroupCard({
       className="rounded-xl border bg-transparent"
       style={{ borderColor: group.color }}
     >
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex justify-between items-center" style={{ color: group.color }}>
+      <CardHeader className="pb-1">
+        <CardTitle className="text-lg flex justify-between items-center py-0" style={{ color: group.color }}>
           <span>{group.name}</span>
           {showControls && (
             <div className="flex space-x-1">
