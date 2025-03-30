@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -143,7 +142,7 @@ const ViewWorkouts = () => {
 
       {/* Edit Workout Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground max-w-md">
+        <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto">
           <DialogHeader>
             <DialogTitle>Edit Workout</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -199,18 +198,11 @@ const ViewWorkouts = () => {
             </div>
           )}
 
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsEditDialogOpen(false)}
-              className="border-zinc-700 hover:bg-zinc-800"
-            >
-              Cancel
-            </Button>
+          <DialogFooter className="flex justify-center">
             <Button 
               onClick={handleSaveWorkout}
               disabled={updateWorkoutMutation.isPending}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-purple-600 hover:bg-purple-700 text-white w-1/2"
             >
               {updateWorkoutMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
