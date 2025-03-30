@@ -6,11 +6,35 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
 import { useExercises } from "@/services/exercises";
+import { format } from "date-fns";
+import { useMemo } from "react";
 
 const Home = () => {
   const { signOut, user } = useAuth();
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
   const { data: exercises, isLoading: loadingExercises } = useExercises();
+  
+  // Get least recently performed exercises for each group
+  const groupExercises = useMemo(() => {
+    if (!exerciseGroups || !exercises) return {};
+    
+    return exerciseGroups.reduce((acc, group) => {
+      // Filter exercises for this group
+      const groupExercisesList = exercises.filter(e => e.group_id === group.id);
+      
+      // Sort by last_performed (null values last, then oldest first)
+      const sortedExercises = [...groupExercisesList].sort((a, b) => {
+        if (!a.last_performed && !b.last_performed) return 0;
+        if (!a.last_performed) return 1;
+        if (!b.last_performed) return -1;
+        return new Date(a.last_performed).getTime() - new Date(b.last_performed).getTime();
+      });
+      
+      // Limit to num_exercises_to_show
+      acc[group.id] = sortedExercises.slice(0, group.num_exercises_to_show || 2);
+      return acc;
+    }, {});
+  }, [exerciseGroups, exercises]);
   
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col">
@@ -71,11 +95,25 @@ const Home = () => {
                 >
                   <CardContent className="p-4">
                     <h3 className="font-medium">{group.name}</h3>
-                    <p className="text-sm text-gray-400">
-                      {loadingExercises 
-                        ? 'Loading exercises...' 
-                        : exercises?.filter(e => e.group_id === group.id).length || 0} exercises
-                    </p>
+                    
+                    {loadingExercises ? (
+                      <p className="text-sm text-gray-400">Loading exercises...</p>
+                    ) : groupExercises[group.id]?.length > 0 ? (
+                      <div className="mt-2 space-y-2">
+                        {groupExercises[group.id].map(exercise => (
+                          <div key={exercise.id} className="bg-gray-800 bg-opacity-50 p-2 rounded-lg">
+                            <p className="text-sm">{exercise.name}</p>
+                            <p className="text-xs text-gray-400">
+                              {exercise.last_performed 
+                                ? `Last performed: ${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
+                                : 'Never performed'}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-400 mt-2">No exercises in this group yet</p>
+                    )}
                   </CardContent>
                 </Card>
               ))}
