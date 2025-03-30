@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
 import { useExercises } from "@/services/exercises";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useMemo } from "react";
 import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
 
@@ -36,7 +36,7 @@ const Home = () => {
         if (!b.last_performed) return 1;  // b should come first
         
         // Both have been performed, sort by date (oldest first)
-        return new Date(a.last_performed).getTime() - new Date(b.last_performed).getTime();
+        return new Date(parseISO(a.last_performed)).getTime() - new Date(parseISO(b.last_performed)).getTime();
       });
       
       // Limit to num_exercises_to_show
@@ -104,7 +104,7 @@ const Home = () => {
                   maxExercises={group.num_exercises_to_show}
                   renderExerciseSecondaryText={(exercise) => 
                     exercise.last_performed
-                      ? `${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
+                      ? `${format(parseISO(exercise.last_performed), 'MMM d, yyyy')}`
                       : 'Never performed'
                   }
                 />
