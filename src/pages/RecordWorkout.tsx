@@ -178,7 +178,6 @@ const RecordWorkout = () => {
                             name={exercise.name}
                             secondaryText={exercise.description}
                             onClick={() => addExerciseToWorkout(exercise)}
-                            showAddButton
                           />
                         ))}
                       </div>

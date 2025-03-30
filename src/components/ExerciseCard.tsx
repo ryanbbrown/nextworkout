@@ -6,7 +6,6 @@ interface ExerciseCardProps {
   secondaryText: string;
   onClick?: () => void;
   className?: string;
-  showAddButton?: boolean;
 }
 
 export function ExerciseCard({
@@ -14,7 +13,6 @@ export function ExerciseCard({
   secondaryText,
   onClick,
   className = "",
-  showAddButton = false,
 }: ExerciseCardProps) {
   return (
     <div
@@ -23,9 +21,6 @@ export function ExerciseCard({
     >
       <p className="text-sm font-medium">{name}</p>
       <p className="text-xs text-zinc-400">{secondaryText}</p>
-      {showAddButton && (
-        <div className="mt-1 text-xs text-zinc-400">Click to add set</div>
-      )}
     </div>
   );
 } 

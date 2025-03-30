@@ -275,7 +275,7 @@ const AddExercises = () => {
                       </div>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="px-2">
+                  <CardContent className="p-4">
                     {!isReordering && (
                       <div className="grid grid-cols-2 gap-2">
                         {getExercisesByGroup(group.id).map((exercise) => (
@@ -287,14 +287,15 @@ const AddExercises = () => {
                           />
                         ))}
                         
-                        <Button
-                          variant="outline"
-                          className="flex flex-col items-center justify-center bg-zinc-900 hover:bg-zinc-700 border border-zinc-800 rounded-lg p-2 w-full"
-                          onClick={() => openCreateExerciseModal(group.id)}
-                        >
-                          <Plus className="h-6 w-6 mb-1" />
-                          <span className="text-xs">Create Exercise</span>
-                        </Button>
+                        <div className="bg-zinc-900 p-2 rounded-lg border border-zinc-800 cursor-pointer hover:bg-zinc-700">
+                          <div 
+                            className="h-full flex flex-col items-center justify-center"
+                            onClick={() => openCreateExerciseModal(group.id)}
+                          >
+                            <Plus className="h-6 w-6 mb-1" />
+                            <span className="text-xs">Create Exercise</span>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </CardContent>
