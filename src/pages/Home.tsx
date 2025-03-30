@@ -104,7 +104,7 @@ const Home = () => {
                   maxExercises={group.num_exercises_to_show}
                   renderExerciseSecondaryText={(exercise) => 
                     exercise.last_performed
-                      ? `Last performed: ${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
+                      ? `${format(new Date(exercise.last_performed), 'MMM d, yyyy')}`
                       : 'Never performed'
                   }
                 />
