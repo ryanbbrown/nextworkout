@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useWorkouts, useUpdateWorkout, WorkoutExercise } from "@/services/workouts";
-import { format, parse } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +34,7 @@ const ViewWorkouts = () => {
   // Handle opening edit dialog
   const handleEditWorkout = (workout: any) => {
     setSelectedWorkout(workout);
-    setSelectedDate(new Date(workout.workout_date));
+    setSelectedDate(parseISO(workout.workout_date));
     
     // Initialize exercise updates with current values
     if (workout.workout_exercises) {
@@ -100,7 +100,7 @@ const ViewWorkouts = () => {
             >
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">
-                  {format(new Date(workout.workout_date), 'EEEE, MMMM d, yyyy')}
+                  {format(parseISO(workout.workout_date), 'EEEE, MMMM d, yyyy')}
                 </CardTitle>
                 <Button 
                   variant="ghost" 
