@@ -6,7 +6,7 @@ import { ArrowLeft, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
-import { useExercisesByGroup, Exercise } from "@/services/exercises";
+import { useExercisesByGroup } from "@/services/exercises";
 import { useCreateWorkout } from "@/services/workouts";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
@@ -98,7 +98,7 @@ const RecordWorkout = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <header className="p-4 border-b border-gray-800 flex items-center">
+      <header className="p-4 border-b border-neutral-800 flex items-center">
         <Link to="/home" className="mr-4">
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -107,24 +107,24 @@ const RecordWorkout = () => {
 
       <main className="flex-1 max-w-md mx-auto w-full p-4 space-y-6">
         {/* This Workout Section */}
-        <Card className="rounded-xl border border-gray-800 bg-background">
+        <Card className="rounded-xl border border-neutral-800 bg-background">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">This Workout</CardTitle>
           </CardHeader>
           <CardContent>
             {selectedExercises.length === 0 ? (
-              <p className="text-sm text-gray-400">Select exercises below to add to your workout</p>
+              <p className="text-sm text-neutral-400">Select exercises below to add to your workout</p>
             ) : (
               <div className="space-y-2">
                 {selectedExercises.map((exercise) => (
                   <div 
                     key={exercise.id}
-                    className="p-3 bg-gray-900 rounded-lg"
+                    className="p-3 bg-neutral-800 rounded-lg"
                   >
                     <div className="flex justify-between items-center cursor-pointer" 
                          onClick={() => removeSetOrExercise(exercise.id)}>
                       <h3 className="font-medium">{exercise.name}</h3>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-neutral-400">
                         {exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}
                       </div>
                     </div>
@@ -133,7 +133,7 @@ const RecordWorkout = () => {
 
                 <Textarea
                   placeholder="Workout notes (optional)"
-                  className="w-full mt-4 bg-gray-900 border-gray-800"
+                  className="w-full mt-4 bg-neutral-800 border-neutral-700"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                 />
@@ -153,7 +153,7 @@ const RecordWorkout = () => {
 
         {/* Exercise Groups */}
         {loadingGroups ? (
-          <p className="text-gray-400 text-center">Loading exercise groups...</p>
+          <p className="text-neutral-400 text-center">Loading exercise groups...</p>
         ) : (
           <div className="space-y-4">
             {exerciseGroups?.map((group) => {
@@ -163,7 +163,7 @@ const RecordWorkout = () => {
               return (
                 <Card 
                   key={group.id} 
-                  className="rounded-xl bg-background border"
+                  className="rounded-xl border bg-transparent"
                   style={{ borderColor: group.color }}
                 >
                   <CardHeader className="pb-2">
@@ -176,16 +176,16 @@ const RecordWorkout = () => {
                           <Button
                             key={exercise.id}
                             variant="outline"
-                            className="flex flex-col items-start h-20 text-left bg-gray-900 hover:bg-gray-800 border-0 rounded-lg p-3"
+                            className="flex flex-col items-start h-20 text-left bg-neutral-800 hover:bg-neutral-700 border-0 rounded-lg p-3"
                             onClick={() => addExerciseToWorkout(exercise)}
                           >
                             <h3 className="font-medium text-sm">{exercise.name}</h3>
-                            <p className="text-xs text-gray-400">{exercise.description}</p>
+                            <p className="text-xs text-neutral-400">{exercise.description}</p>
                           </Button>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-400">No exercises in this group yet</p>
+                      <p className="text-sm text-neutral-400">No exercises in this group yet</p>
                     )}
                   </CardContent>
                 </Card>

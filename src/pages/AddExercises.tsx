@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,18 +16,15 @@ const AddExercises = () => {
   const { toast } = useToast();
   const [isReordering, setIsReordering] = useState(false);
   
-  // Modals state
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
   const [showEditGroupModal, setShowEditGroupModal] = useState(false);
   const [showCreateExerciseModal, setShowCreateExerciseModal] = useState(false);
   const [showEditExerciseModal, setShowEditExerciseModal] = useState(false);
   
-  // Current selected items
   const [currentGroupId, setCurrentGroupId] = useState<string | null>(null);
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [currentGroup, setCurrentGroup] = useState<ExerciseGroup | null>(null);
   
-  // Form states
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupColor, setNewGroupColor] = useState('#9333ea');
   const [editGroupName, setEditGroupName] = useState('');
@@ -38,12 +34,9 @@ const AddExercises = () => {
   const [editExerciseName, setEditExerciseName] = useState('');
   const [editExerciseDescription, setEditExerciseDescription] = useState('');
   
-  // Data fetching
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
-  // Fetch all exercises once
   const { data: allExercises = [] } = useExercises();
   
-  // Mutations
   const createGroupMutation = useCreateExerciseGroup();
   const updateGroupMutation = useUpdateExerciseGroup();
   const deleteGroupMutation = useDeleteExerciseGroup();
@@ -51,7 +44,6 @@ const AddExercises = () => {
   const updateExerciseMutation = useUpdateExercise();
   const deleteExerciseMutation = useDeleteExercise();
   
-  // Mocked color options for exercise groups
   const colorOptions = [
     { name: "Purple", value: "#9333ea" },
     { name: "Blue", value: "#2563eb" },
@@ -61,12 +53,10 @@ const AddExercises = () => {
     { name: "Pink", value: "#ec4899" },
   ];
   
-  // Filter exercises by group
   const getExercisesByGroup = (groupId: string) => {
     return allExercises.filter(exercise => exercise.group_id === groupId);
   };
   
-  // Handlers for group operations
   const handleCreateGroup = () => {
     if (!newGroupName.trim()) {
       toast({ title: "Error", description: "Group name cannot be empty", variant: "destructive" });
@@ -125,7 +115,6 @@ const AddExercises = () => {
     }
   };
   
-  // Handlers for exercise operations
   const handleCreateExercise = () => {
     if (!currentGroupId || !newExerciseName.trim()) {
       toast({ title: "Error", description: "Exercise name cannot be empty", variant: "destructive" });
@@ -186,7 +175,6 @@ const AddExercises = () => {
     }
   };
   
-  // Handlers for modal open/close
   const openCreateGroupModal = () => {
     setNewGroupName('');
     setNewGroupColor('#9333ea');
@@ -215,8 +203,8 @@ const AddExercises = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
-      <header className="p-4 border-b border-gray-800 flex items-center">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <header className="p-4 border-b border-neutral-800 flex items-center">
         <Link to="/home" className="mr-4">
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -243,11 +231,11 @@ const AddExercises = () => {
       <main className="flex-1 max-w-md mx-auto w-full p-4 space-y-6">
         {loadingGroups ? (
           <div className="text-center py-10">
-            <p className="text-gray-400">Loading exercise groups...</p>
+            <p className="text-neutral-400">Loading exercise groups...</p>
           </div>
         ) : exerciseGroups?.length === 0 ? (
           <div className="text-center py-10">
-            <p className="mb-4 text-gray-400">You don't have any exercise groups yet</p>
+            <p className="mb-4 text-neutral-400">You don't have any exercise groups yet</p>
             <Button 
               className="bg-purple-600 hover:bg-purple-700" 
               onClick={openCreateGroupModal}
@@ -260,11 +248,11 @@ const AddExercises = () => {
             {exerciseGroups?.map((group) => (
               <div key={group.id} className="space-y-3">
                 <Card 
-                  className="rounded-xl border-0 relative"
-                  style={{ backgroundColor: `${group.color}30` /* Add transparency */ }}
+                  className="rounded-xl bg-transparent border relative"
+                  style={{ borderColor: group.color }}
                 >
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex justify-between items-center">
+                    <CardTitle className="text-lg flex justify-between items-center" style={{ color: group.color }}>
                       <span>{group.name}</span>
                       <div className="flex space-x-1">
                         <Button 
@@ -294,20 +282,20 @@ const AddExercises = () => {
                       <Button
                         key={exercise.id}
                         variant="outline"
-                        className="flex flex-col items-center h-24 bg-gray-800 text-left border-0 rounded-xl relative p-3"
+                        className="flex flex-col items-center h-24 bg-neutral-800 hover:bg-neutral-700 text-left border-0 rounded-xl relative p-3"
                         onClick={() => openEditExerciseModal(exercise)}
                       >
-                        <Pencil className="h-3 w-3 absolute top-2 right-2 text-gray-500" />
+                        <Pencil className="h-3 w-3 absolute top-2 right-2 text-neutral-500" />
                         <div className="mt-2 text-center">
                           <p className="font-medium text-sm line-clamp-2">{exercise.name}</p>
-                          <p className="text-xs text-gray-400">{exercise.description}</p>
+                          <p className="text-xs text-neutral-400">{exercise.description}</p>
                         </div>
                       </Button>
                     ))}
                     
                     <Button
                       variant="outline"
-                      className="flex flex-col items-center justify-center h-24 bg-gray-800 hover:bg-gray-700 border-0 rounded-xl"
+                      className="flex flex-col items-center justify-center h-24 bg-neutral-800 hover:bg-neutral-700 border-0 rounded-xl"
                       onClick={() => openCreateExerciseModal(group.id)}
                     >
                       <Plus className="h-6 w-6 mb-1" />
@@ -330,9 +318,8 @@ const AddExercises = () => {
         )}
       </main>
 
-      {/* Create Group Modal */}
       <Dialog open={showCreateGroupModal} onOpenChange={setShowCreateGroupModal}>
-        <DialogContent className="bg-gray-800 text-white border-0">
+        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
           <DialogHeader>
             <DialogTitle>Create Exercise Group</DialogTitle>
           </DialogHeader>
@@ -344,7 +331,7 @@ const AddExercises = () => {
                 value={newGroupName} 
                 onChange={(e) => setNewGroupName(e.target.value)} 
                 placeholder="e.g., Upper Body"
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-neutral-700 border-neutral-600 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -371,9 +358,8 @@ const AddExercises = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Group Modal */}
       <Dialog open={showEditGroupModal} onOpenChange={setShowEditGroupModal}>
-        <DialogContent className="bg-gray-800 text-white border-0">
+        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
           <DialogHeader>
             <DialogTitle>Edit Exercise Group</DialogTitle>
           </DialogHeader>
@@ -384,7 +370,7 @@ const AddExercises = () => {
                 id="edit-group-name" 
                 value={editGroupName} 
                 onChange={(e) => setEditGroupName(e.target.value)} 
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-neutral-700 border-neutral-600 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -411,9 +397,8 @@ const AddExercises = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Create Exercise Modal */}
       <Dialog open={showCreateExerciseModal} onOpenChange={setShowCreateExerciseModal}>
-        <DialogContent className="bg-gray-800 text-white border-0">
+        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
           <DialogHeader>
             <DialogTitle>Create Exercise</DialogTitle>
           </DialogHeader>
@@ -425,7 +410,7 @@ const AddExercises = () => {
                 value={newExerciseName} 
                 onChange={(e) => setNewExerciseName(e.target.value)} 
                 placeholder="e.g., Push-ups"
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-neutral-700 border-neutral-600 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -435,7 +420,7 @@ const AddExercises = () => {
                 value={newExerciseDescription} 
                 onChange={(e) => setNewExerciseDescription(e.target.value)} 
                 placeholder="e.g., 3x10"
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-neutral-700 border-neutral-600 text-white"
               />
             </div>
           </div>
@@ -448,9 +433,8 @@ const AddExercises = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Exercise Modal */}
       <Dialog open={showEditExerciseModal} onOpenChange={setShowEditExerciseModal}>
-        <DialogContent className="bg-gray-800 text-white border-0">
+        <DialogContent className="bg-neutral-800 text-white border-neutral-700">
           <DialogHeader>
             <DialogTitle>Edit Exercise</DialogTitle>
           </DialogHeader>
@@ -461,7 +445,7 @@ const AddExercises = () => {
                 id="edit-exercise-name" 
                 value={editExerciseName} 
                 onChange={(e) => setEditExerciseName(e.target.value)} 
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-neutral-700 border-neutral-600 text-white"
               />
             </div>
             <div className="space-y-2">
@@ -470,7 +454,7 @@ const AddExercises = () => {
                 id="edit-exercise-description" 
                 value={editExerciseDescription} 
                 onChange={(e) => setEditExerciseDescription(e.target.value)} 
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-neutral-700 border-neutral-600 text-white"
               />
             </div>
           </div>
