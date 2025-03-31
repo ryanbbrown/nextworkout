@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dumbbell, History, LogOut, Plus } from "lucide-react";
@@ -8,9 +9,11 @@ import { useExercises } from "@/services/exercises";
 import { format, parseISO } from "date-fns";
 import { useMemo } from "react";
 import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
+import { useToast } from "@/hooks/use-toast";
 
 const Home = () => {
   const { signOut, user } = useAuth();
+  const { toast } = useToast();
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
   const { data: exercises, isLoading: loadingExercises } = useExercises();
   

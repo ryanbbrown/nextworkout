@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExerciseGroup } from "@/services/exerciseGroups";
 import { Exercise } from "@/services/exercises";
@@ -85,9 +86,6 @@ export function ExerciseGroupCard({
             </div>
           )}
         </div>
-        {exercises.length === 0 && (
-          <p className="text-sm text-neutral-400">No exercises in this group yet</p>
-        )}
       </CardContent>
     </Card>
   );

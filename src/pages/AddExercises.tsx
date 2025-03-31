@@ -61,7 +61,12 @@ const AddExercises = () => {
   
   const handleCreateGroup = () => {
     if (!newGroupName.trim()) {
-      toast({ title: "Error", description: "Group name cannot be empty", variant: "destructive" });
+      toast({ 
+        title: "Error", 
+        description: "Group name cannot be empty", 
+        variant: "destructive",
+        duration: 1000 
+      });
       return;
     }
     
@@ -72,20 +77,34 @@ const AddExercises = () => {
       user_id: user?.id || ''
     }, {
       onSuccess: () => {
-        toast({ title: "Success", description: "Exercise group created successfully" });
+        toast({ 
+          title: "Success", 
+          description: "Exercise group created successfully",
+          duration: 1000 
+        });
         setNewGroupName('');
         setNewGroupColor('#9333ea');
         setShowCreateGroupModal(false);
       },
       onError: (error) => {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({ 
+          title: "Error", 
+          description: error.message, 
+          variant: "destructive",
+          duration: 1000 
+        });
       }
     });
   };
   
   const handleEditGroup = () => {
     if (!currentGroup || !editGroupName.trim()) {
-      toast({ title: "Error", description: "Group name cannot be empty", variant: "destructive" });
+      toast({ 
+        title: "Error", 
+        description: "Group name cannot be empty", 
+        variant: "destructive",
+        duration: 1000 
+      });
       return;
     }
     
@@ -95,11 +114,20 @@ const AddExercises = () => {
       color: editGroupColor
     }, {
       onSuccess: () => {
-        toast({ title: "Success", description: "Exercise group updated successfully" });
+        toast({ 
+          title: "Success", 
+          description: "Exercise group updated successfully",
+          duration: 1000 
+        });
         setShowEditGroupModal(false);
       },
       onError: (error) => {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({ 
+          title: "Error", 
+          description: error.message, 
+          variant: "destructive",
+          duration: 1000 
+        });
       }
     });
   };
@@ -108,10 +136,19 @@ const AddExercises = () => {
     if (confirm(`Are you sure you want to delete ${group.name}? This will also delete all exercises in this group.`)) {
       deleteGroupMutation.mutate(group.id, {
         onSuccess: () => {
-          toast({ title: "Success", description: "Exercise group deleted successfully" });
+          toast({ 
+            title: "Success", 
+            description: "Exercise group deleted successfully",
+            duration: 1000 
+          });
         },
         onError: (error) => {
-          toast({ title: "Error", description: error.message, variant: "destructive" });
+          toast({ 
+            title: "Error", 
+            description: error.message, 
+            variant: "destructive",
+            duration: 1000 
+          });
         }
       });
     }
@@ -119,7 +156,12 @@ const AddExercises = () => {
   
   const handleCreateExercise = () => {
     if (!currentGroupId || !newExerciseName.trim()) {
-      toast({ title: "Error", description: "Exercise name cannot be empty", variant: "destructive" });
+      toast({ 
+        title: "Error", 
+        description: "Exercise name cannot be empty", 
+        variant: "destructive",
+        duration: 1000 
+      });
       return;
     }
     
@@ -132,20 +174,34 @@ const AddExercises = () => {
       last_dequeued: null
     }, {
       onSuccess: () => {
-        toast({ title: "Success", description: "Exercise created successfully" });
+        toast({ 
+          title: "Success", 
+          description: "Exercise created successfully",
+          duration: 1000 
+        });
         setNewExerciseName('');
         setNewExerciseDescription('');
         setShowCreateExerciseModal(false);
       },
       onError: (error) => {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({ 
+          title: "Error", 
+          description: error.message, 
+          variant: "destructive",
+          duration: 1000 
+        });
       }
     });
   };
   
   const handleEditExercise = () => {
     if (!currentExercise || !editExerciseName.trim()) {
-      toast({ title: "Error", description: "Exercise name cannot be empty", variant: "destructive" });
+      toast({ 
+        title: "Error", 
+        description: "Exercise name cannot be empty", 
+        variant: "destructive",
+        duration: 1000 
+      });
       return;
     }
     
@@ -155,11 +211,20 @@ const AddExercises = () => {
       description: editExerciseDescription
     }, {
       onSuccess: () => {
-        toast({ title: "Success", description: "Exercise updated successfully" });
+        toast({ 
+          title: "Success", 
+          description: "Exercise updated successfully",
+          duration: 1000 
+        });
         setShowEditExerciseModal(false);
       },
       onError: (error) => {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({ 
+          title: "Error", 
+          description: error.message, 
+          variant: "destructive",
+          duration: 1000 
+        });
       }
     });
   };
@@ -168,10 +233,19 @@ const AddExercises = () => {
     if (confirm(`Are you sure you want to delete ${exercise.name}?`)) {
       deleteExerciseMutation.mutate(exercise.id, {
         onSuccess: () => {
-          toast({ title: "Success", description: "Exercise deleted successfully" });
+          toast({ 
+            title: "Success", 
+            description: "Exercise deleted successfully",
+            duration: 1000 
+          });
         },
         onError: (error) => {
-          toast({ title: "Error", description: error.message, variant: "destructive" });
+          toast({ 
+            title: "Error", 
+            description: error.message, 
+            variant: "destructive",
+            duration: 1000 
+          });
         }
       });
     }
