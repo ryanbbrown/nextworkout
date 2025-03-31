@@ -1,7 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dumbbell, History, LogOut, Plus } from "lucide-react";
+import { Dumbbell, History, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
@@ -10,9 +9,10 @@ import { format, parseISO } from "date-fns";
 import { useMemo } from "react";
 import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
 import { useToast } from "@/hooks/use-toast";
+import Header from "@/components/Header";
 
 const Home = () => {
-  const { signOut, user } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
   const { data: exercises, isLoading: loadingExercises } = useExercises();
@@ -50,17 +50,7 @@ const Home = () => {
   
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <header className="p-4 border-b border-zinc-800 flex justify-between items-center">
-        <h1 className="text-xl font-bold">NextWorkout</h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={signOut}
-          className="text-zinc-400 hover:text-white"
-        >
-          <LogOut className="h-5 w-5" />
-        </Button>
-      </header>
+      <Header showLogout={true} />
 
       <main className="flex-1 p-4 max-w-md mx-auto w-full">
         <div className="space-y-4">
