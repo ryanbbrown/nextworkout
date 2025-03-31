@@ -113,55 +113,53 @@ const RecordWorkout = () => {
 
       <main className="flex-1 max-w-md mx-auto w-full p-4 space-y-6">
         {/* This Workout Section */}
-        <div className="space-y-3">
-          <Card className="rounded-xl border border-neutral-800 bg-background">
-            <CardHeader className="pb-0">
-              <CardTitle className="text-lg">This Workout</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 flex flex-col">
-              <div className="h-[120px] mb-3">
-                {selectedExercises.length === 0 ? (
-                  <p className="text-sm text-neutral-400">Select exercises below to add to your workout</p>
-                ) : (
-                  <ScrollArea className="h-full w-full pr-2">
-                    <div className="space-y-1.5">
-                      {selectedExercises.map((exercise) => (
-                        <div 
-                          key={exercise.id}
-                          className="bg-zinc-900 border border-zinc-800 rounded-lg p-2"
-                        >
-                          <div className="flex justify-between items-center cursor-pointer" 
-                              onClick={() => removeSetOrExercise(exercise.id)}>
-                            <h3 className="font-medium text-sm">{exercise.name}</h3>
-                            <div className="text-xs text-neutral-400">
-                              {exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}
-                            </div>
+        <Card className="rounded-xl border border-neutral-800 bg-background">
+          <CardHeader className="pb-0">
+            <CardTitle className="text-lg">This Workout</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 flex flex-col">
+            <div className="h-[120px] mb-3">
+              {selectedExercises.length === 0 ? (
+                <p className="text-sm text-neutral-400">Select exercises below to add to your workout</p>
+              ) : (
+                <ScrollArea className="h-full w-full pr-2">
+                  <div className="space-y-1.5">
+                    {selectedExercises.map((exercise) => (
+                      <div 
+                        key={exercise.id}
+                        className="bg-zinc-900 border border-zinc-800 rounded-lg p-2"
+                      >
+                        <div className="flex justify-between items-center cursor-pointer" 
+                            onClick={() => removeSetOrExercise(exercise.id)}>
+                          <h3 className="font-medium text-sm">{exercise.name}</h3>
+                          <div className="text-xs text-neutral-400">
+                            {exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                )}
-              </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </div>
 
-              <Textarea
-                placeholder="Workout notes (optional)"
-                className="w-full bg-zinc-900 border-zinc-800 text-sm min-h-[60px] resize-none"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </CardContent>
-          </Card>
-
-          <Button 
-            className="w-full bg-green-600 hover:bg-green-700 text-white disabled:bg-zinc-700 disabled:text-zinc-400"
-            onClick={handleSaveWorkout}
-            disabled={selectedExercises.length === 0 || createWorkoutMutation.isPending}
-          >
-            <Check className="h-4 w-4 mr-2" />
-            {createWorkoutMutation.isPending ? "Saving..." : "Record Workout"}
-          </Button>
-        </div>
+            <Textarea
+              placeholder="Workout notes (optional)"
+              className="w-full bg-zinc-900 border-zinc-800 text-sm min-h-[60px] resize-none mb-3"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+            
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700 text-white disabled:bg-zinc-700 disabled:text-zinc-400"
+              onClick={handleSaveWorkout}
+              disabled={selectedExercises.length === 0 || createWorkoutMutation.isPending}
+            >
+              <Check className="h-4 w-4 mr-2" />
+              {createWorkoutMutation.isPending ? "Saving..." : "Record Workout"}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Exercise Groups */}
         {loadingGroups || loadingExercises ? (
