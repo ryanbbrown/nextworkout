@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -54,7 +53,6 @@ const ViewWorkouts = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   
-  // State for edit dialog
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -64,7 +62,6 @@ const ViewWorkouts = () => {
   const [selectedExerciseId, setSelectedExerciseId] = useState<string>("");
   const [newExerciseSets, setNewExerciseSets] = useState<number>(3);
   
-  // New state for temporary new exercises (not yet saved to backend)
   const [tempNewExercises, setTempNewExercises] = useState<{
     id: string;
     exercise_id: string;
@@ -72,21 +69,17 @@ const ViewWorkouts = () => {
     exercise?: Exercise;
   }[]>([]);
   
-  // State for delete dialog
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Handle opening edit dialog
   const handleEditWorkout = (workout: any) => {
     setSelectedWorkout(workout);
     setSelectedDate(parseISO(workout.workout_date));
     
-    // Reset state
     setExercisesToRemove([]);
     setSelectedExerciseId("");
     setNewExerciseSets(3);
     setTempNewExercises([]);
     
-    // Initialize exercise updates with current values
     if (workout.workout_exercises) {
       setExerciseUpdates(
         workout.workout_exercises.map((ex: WorkoutExercise) => ({
@@ -99,10 +92,8 @@ const ViewWorkouts = () => {
     setIsEditDialogOpen(true);
   };
 
-  // Handle saving workout changes
   const handleSaveWorkout = async () => {
     try {
-      // First save the workout date and remove exercises
       await updateWorkoutMutation.mutateAsync({
         workoutId: selectedWorkout.id,
         newDate: selectedDate,
@@ -110,7 +101,6 @@ const ViewWorkouts = () => {
         exercisesToRemove
       });
       
-      // Then add any new exercises
       if (tempNewExercises.length > 0) {
         for (const exercise of tempNewExercises) {
           await addExerciseMutation.mutateAsync({
@@ -123,7 +113,7 @@ const ViewWorkouts = () => {
       }
       
       setIsEditDialogOpen(false);
-      setTempNewExercises([]); // Clear temp exercises after saving
+      setTempNewExercises([]);
       
       toast({
         title: "Workout updated",
@@ -139,15 +129,12 @@ const ViewWorkouts = () => {
     }
   };
 
-  // Handle exercise sets change
   const handleSetsChange = (exerciseId: string, newSets: number) => {
     if (newSets === 0) {
-      // Mark for removal
       setExercisesToRemove(prev => 
         prev.includes(exerciseId) ? prev : [...prev, exerciseId]
       );
     } else {
-      // Remove from exercisesToRemove if it was previously marked
       setExercisesToRemove(prev => prev.filter(id => id !== exerciseId));
     }
     
@@ -156,7 +143,6 @@ const ViewWorkouts = () => {
     );
   };
   
-  // Handle adding a new exercise to the workout (but only in UI until saved)
   const handleAddExercise = () => {
     if (!selectedExerciseId || newExerciseSets <= 0) {
       toast({
@@ -170,10 +156,8 @@ const ViewWorkouts = () => {
     const selectedExercise = exercises?.find(ex => ex.id === selectedExerciseId);
     if (!selectedExercise) return;
     
-    // Create a temporary ID for the new exercise
     const tempId = `temp-${Date.now()}`;
     
-    // Add to temporary exercises
     const newTempExercise = {
       id: tempId,
       exercise_id: selectedExerciseId,
@@ -183,7 +167,6 @@ const ViewWorkouts = () => {
     
     setTempNewExercises(prev => [...prev, newTempExercise]);
     
-    // Reset selection
     setSelectedExerciseId("");
     setNewExerciseSets(3);
     
@@ -193,7 +176,6 @@ const ViewWorkouts = () => {
     });
   };
   
-  // Handle deleting the workout
   const handleDeleteWorkout = async () => {
     try {
       await deleteWorkoutMutation.mutateAsync(selectedWorkout.id);
@@ -215,22 +197,17 @@ const ViewWorkouts = () => {
     }
   };
 
-  // Handle closing delete dialog without deleting
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
-    // Don't close the edit dialog when canceling the delete
   };
 
-  // Filter out exercises that are already in the workout (including temp ones)
   const getAvailableExercises = () => {
     if (!exercises) return [];
     
     return exercises.filter(exercise => 
-      // Not in original workout exercises (that aren't marked for removal)
       !selectedWorkout?.workout_exercises?.some(
         (we: WorkoutExercise) => we.exercise_id === exercise.id && !exercisesToRemove.includes(we.id)
       ) &&
-      // Not in temporary new exercises
       !tempNewExercises.some(te => te.exercise_id === exercise.id)
     );
   };
@@ -296,7 +273,6 @@ const ViewWorkouts = () => {
         )}
       </main>
 
-      {/* Edit Workout Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto rounded-xl">
           <ScrollArea className="max-h-[80vh] overflow-y-auto pr-4">
@@ -309,7 +285,6 @@ const ViewWorkouts = () => {
 
             {selectedWorkout && (
               <div className="space-y-4">
-                {/* Date Picker */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Workout Date</label>
                   <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
@@ -336,16 +311,15 @@ const ViewWorkouts = () => {
                   </Popover>
                 </div>
 
-                {/* Exercise Sets Inputs */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between mb-1">
                     <label className="text-sm font-medium">Exercise Sets</label>
                   </div>
                   
                   {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, index: number) => (
                     <div 
                       key={ex.id} 
-                      className={`flex items-center justify-between p-2 rounded-md ${
+                      className={`flex items-center justify-between p-1.5 rounded-md ${
                         exercisesToRemove.includes(ex.id) ? 'bg-red-900/20 border border-red-900/40' : ''
                       }`}
                     >
@@ -365,9 +339,11 @@ const ViewWorkouts = () => {
                     </div>
                   ))}
                   
-                  {/* Temporary new exercises (not yet saved) */}
                   {tempNewExercises.map((ex) => (
-                    <div key={ex.id} className="flex items-center justify-between p-2 rounded-md bg-purple-900/20 border border-purple-900/40">
+                    <div 
+                      key={ex.id} 
+                      className="flex items-center justify-between p-1.5 rounded-md bg-purple-900/20 border border-purple-900/40"
+                    >
                       <span className="text-sm">
                         {ex.exercise?.name}
                         <span className="text-xs ml-2 text-purple-400">(New)</span>
@@ -387,9 +363,8 @@ const ViewWorkouts = () => {
                     </div>
                   ))}
 
-                  {/* Add New Exercise */}
-                  <div className="pt-4 border-t border-zinc-800 mt-4">
-                    <h4 className="text-sm font-medium mb-2">Add Exercise</h4>
+                  <div className="pt-3 border-t border-zinc-800 mt-3">
+                    <h4 className="text-sm font-medium mb-1.5">Add Exercise</h4>
                     <div className="flex flex-col space-y-2">
                       <Select value={selectedExerciseId} onValueChange={setSelectedExerciseId}>
                         <SelectTrigger className="w-full bg-zinc-800 border-zinc-700">
@@ -428,7 +403,7 @@ const ViewWorkouts = () => {
               </div>
             )}
 
-            <DialogFooter className="flex flex-col mt-6 space-y-2">
+            <DialogFooter className="flex flex-col mt-4 space-y-2">
               <Button 
                 onClick={handleSaveWorkout}
                 disabled={updateWorkoutMutation.isPending}
@@ -450,7 +425,6 @@ const ViewWorkouts = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog 
         open={isDeleteDialogOpen} 
         onOpenChange={(open) => !open && handleCancelDelete()}
