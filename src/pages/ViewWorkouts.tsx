@@ -276,147 +276,149 @@ const ViewWorkouts = () => {
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto rounded-xl">
-          <ScrollArea className="max-h-[80vh] overflow-y-auto pr-4">
-            <DialogHeader>
-              <DialogTitle>Edit Workout</DialogTitle>
-              <DialogDescription className="text-zinc-400">
-                Edit the date, exercises, or sets for this workout.
-              </DialogDescription>
-            </DialogHeader>
+          <ScrollArea className="max-h-[80vh] overflow-y-auto pr-4 px-0 mx-auto w-full">
+            <div className="px-1">
+              <DialogHeader>
+                <DialogTitle>Edit Workout</DialogTitle>
+                <DialogDescription className="text-zinc-400">
+                  Edit the date, exercises, or sets for this workout.
+                </DialogDescription>
+              </DialogHeader>
 
-            {selectedWorkout && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Workout Date</label>
-                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start text-left border-zinc-700 bg-zinc-800"
-                      >
-                        {selectedDate ? format(selectedDate, 'PPP') : 'Select date'}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-zinc-900 border border-zinc-700">
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={(date) => {
-                          setSelectedDate(date);
-                          setIsCalendarOpen(false);
-                        }}
-                        initialFocus
-                        className="p-3 pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-sm font-medium">Exercise Sets</label>
+              {selectedWorkout && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Workout Date</label>
+                    <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left border-zinc-700 bg-zinc-800"
+                        >
+                          {selectedDate ? format(selectedDate, 'PPP') : 'Select date'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-zinc-900 border border-zinc-700">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={(date) => {
+                            setSelectedDate(date);
+                            setIsCalendarOpen(false);
+                          }}
+                          initialFocus
+                          className="p-3 pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
-                  
-                  {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, index: number) => (
-                    <div 
-                      key={ex.id} 
-                      className={`flex items-center justify-between p-1.5 rounded-md ${
-                        exercisesToRemove.includes(ex.id) ? 'bg-red-900/20 border border-red-900/40' : ''
-                      }`}
-                    >
-                      <span className="text-sm">
-                        {ex.exercise?.name}
-                        {exercisesToRemove.includes(ex.id) && (
-                          <span className="text-xs ml-2 text-red-400">(Will be removed)</span>
-                        )}
-                      </span>
-                      <NumberInput
-                        value={exercisesToRemove.includes(ex.id) ? 0 : (exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets)}
-                        onChange={(newValue) => handleSetsChange(ex.id, newValue)}
-                        min={0}
-                        className="w-24 bg-zinc-800 border-zinc-700"
-                      />
-                    </div>
-                  ))}
-                  
-                  {tempNewExercises.map((ex) => (
-                    <div 
-                      key={ex.id} 
-                      className="flex items-center justify-between p-1.5 rounded-md bg-purple-900/20 border border-purple-900/40"
-                    >
-                      <span className="text-sm">
-                        {ex.exercise?.name}
-                        <span className="text-xs ml-2 text-purple-400">(New)</span>
-                      </span>
-                      <NumberInput
-                        value={ex.sets}
-                        onChange={(newValue) => {
-                          setTempNewExercises(prev => 
-                            prev.map(item => item.id === ex.id ? {...item, sets: newValue} : item)
-                          );
-                        }}
-                        min={1}
-                        className="w-24 bg-zinc-800 border-zinc-700"
-                      />
-                    </div>
-                  ))}
 
-                  <div className="pt-3 border-t border-zinc-800 mt-3">
-                    <h4 className="text-sm font-medium mb-1.5">Add Exercise</h4>
-                    <div className="flex flex-col space-y-2">
-                      <Select value={selectedExerciseId} onValueChange={setSelectedExerciseId}>
-                        <SelectTrigger className="w-full bg-zinc-800 border-zinc-700">
-                          <SelectValue placeholder="Select an exercise" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-zinc-800 border-zinc-700">
-                          {getAvailableExercises().map((exercise: Exercise) => (
-                            <SelectItem key={exercise.id} value={exercise.id}>
-                              {exercise.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      <div className="flex space-x-2">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium">Exercise Sets</label>
+                    </div>
+                    
+                    {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, index: number) => (
+                      <div 
+                        key={ex.id} 
+                        className={`flex items-center justify-between p-1.5 rounded-md ${
+                          exercisesToRemove.includes(ex.id) ? 'bg-red-900/20 border border-red-900/40' : ''
+                        }`}
+                      >
+                        <span className="text-sm">
+                          {ex.exercise?.name}
+                          {exercisesToRemove.includes(ex.id) && (
+                            <span className="text-xs ml-2 text-red-400">(Will be removed)</span>
+                          )}
+                        </span>
                         <NumberInput
-                          value={newExerciseSets}
-                          onChange={setNewExerciseSets}
+                          value={exercisesToRemove.includes(ex.id) ? 0 : (exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets)}
+                          onChange={(newValue) => handleSetsChange(ex.id, newValue)}
+                          min={0}
+                          className="w-24 bg-zinc-800 border-zinc-700"
+                        />
+                      </div>
+                    ))}
+                    
+                    {tempNewExercises.map((ex) => (
+                      <div 
+                        key={ex.id} 
+                        className="flex items-center justify-between p-1.5 rounded-md bg-purple-900/20 border border-purple-900/40"
+                      >
+                        <span className="text-sm">
+                          {ex.exercise?.name}
+                          <span className="text-xs ml-2 text-purple-400">(New)</span>
+                        </span>
+                        <NumberInput
+                          value={ex.sets}
+                          onChange={(newValue) => {
+                            setTempNewExercises(prev => 
+                              prev.map(item => item.id === ex.id ? {...item, sets: newValue} : item)
+                            );
+                          }}
                           min={1}
                           className="w-24 bg-zinc-800 border-zinc-700"
                         />
-                        <Button 
-                          onClick={handleAddExercise}
-                          disabled={!selectedExerciseId || newExerciseSets <= 0}
-                          className="bg-purple-700 hover:bg-purple-800"
-                        >
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add
-                        </Button>
+                      </div>
+                    ))}
+
+                    <div className="pt-3 border-t border-zinc-800 mt-3">
+                      <h4 className="text-sm font-medium mb-1.5">Add Exercise</h4>
+                      <div className="flex flex-col space-y-2">
+                        <Select value={selectedExerciseId} onValueChange={setSelectedExerciseId}>
+                          <SelectTrigger className="w-full bg-zinc-800 border-zinc-700">
+                            <SelectValue placeholder="Select an exercise" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-zinc-800 border-zinc-700">
+                            {getAvailableExercises().map((exercise: Exercise) => (
+                              <SelectItem key={exercise.id} value={exercise.id}>
+                                {exercise.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        <div className="flex space-x-2">
+                          <NumberInput
+                            value={newExerciseSets}
+                            onChange={setNewExerciseSets}
+                            min={1}
+                            className="w-24 bg-zinc-800 border-zinc-700"
+                          />
+                          <Button 
+                            onClick={handleAddExercise}
+                            disabled={!selectedExerciseId || newExerciseSets <= 0}
+                            className="bg-purple-700 hover:bg-purple-800"
+                          >
+                            <Plus className="h-4 w-4 mr-1" />
+                            Add
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <DialogFooter className="flex flex-col mt-4 space-y-2">
-              <Button 
-                onClick={handleSaveWorkout}
-                disabled={updateWorkoutMutation.isPending}
-                className="bg-purple-600 hover:bg-purple-700 text-white w-full h-10"
-              >
-                {updateWorkoutMutation.isPending ? "Saving..." : "Save Changes"}
-              </Button>
-              
-              <Button
-                variant="destructive"
-                onClick={() => setIsDeleteDialogOpen(true)}
-                className="bg-red-900 hover:bg-red-800 w-full h-10"
-              >
-                <Trash2 className="h-4 w-4 mr-1" />
-                Delete Workout
-              </Button>
-            </DialogFooter>
+              <DialogFooter className="flex flex-col mt-4 space-y-2">
+                <Button 
+                  onClick={handleSaveWorkout}
+                  disabled={updateWorkoutMutation.isPending}
+                  className="bg-purple-600 hover:bg-purple-700 text-white w-full h-10"
+                >
+                  {updateWorkoutMutation.isPending ? "Saving..." : "Save Changes"}
+                </Button>
+                
+                <Button
+                  variant="destructive"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                  className="bg-red-900 hover:bg-red-800 w-full h-10"
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete Workout
+                </Button>
+              </DialogFooter>
+            </div>
           </ScrollArea>
         </DialogContent>
       </Dialog>
