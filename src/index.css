@@ -59,7 +59,7 @@
     --card: 240 3% 6%; /* Same as background */
     --card-foreground: 0 0% 98%; /* White */
 
-    --popover: 240 3% 6%;
+    --popover: 240 3% 12%; /* Slightly lighter than background for better visibility */
     --popover-foreground: 0 0% 98%;
 
     --primary: 0 0% 98%; /* White */
@@ -71,7 +71,7 @@
     --muted: 240 3% 12%;
     --muted-foreground: 240 5% 65%; /* Light zinc grey for secondary text */
 
-    --accent: 240 3% 6%;
+    --accent: 240 3% 12%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
