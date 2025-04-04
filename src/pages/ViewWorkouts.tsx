@@ -30,12 +30,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { NumberInput } from "@/components/ui/number-input";
 import {
   Select,
   SelectContent,
@@ -70,7 +71,7 @@ const ViewWorkouts = () => {
   }[]>([]);
   
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
+  
   const handleEditWorkout = (workout: any) => {
     setSelectedWorkout(workout);
     setSelectedDate(parseISO(workout.workout_date));
@@ -329,12 +330,11 @@ const ViewWorkouts = () => {
                           <span className="text-xs ml-2 text-red-400">(Will be removed)</span>
                         )}
                       </span>
-                      <Input
-                        type="number"
+                      <NumberInput
                         value={exercisesToRemove.includes(ex.id) ? 0 : (exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets)}
-                        onChange={(e) => handleSetsChange(ex.id, parseInt(e.target.value) || 0)}
-                        min="0"
-                        className="w-20 bg-zinc-800 border-zinc-700"
+                        onChange={(newValue) => handleSetsChange(ex.id, newValue)}
+                        min={0}
+                        className="w-24 bg-zinc-800 border-zinc-700"
                       />
                     </div>
                   ))}
@@ -348,17 +348,15 @@ const ViewWorkouts = () => {
                         {ex.exercise?.name}
                         <span className="text-xs ml-2 text-purple-400">(New)</span>
                       </span>
-                      <Input
-                        type="number"
+                      <NumberInput
                         value={ex.sets}
-                        onChange={(e) => {
-                          const newSets = parseInt(e.target.value) || 0;
+                        onChange={(newValue) => {
                           setTempNewExercises(prev => 
-                            prev.map(item => item.id === ex.id ? {...item, sets: newSets} : item)
+                            prev.map(item => item.id === ex.id ? {...item, sets: newValue} : item)
                           );
                         }}
-                        min="1"
-                        className="w-20 bg-zinc-800 border-zinc-700"
+                        min={1}
+                        className="w-24 bg-zinc-800 border-zinc-700"
                       />
                     </div>
                   ))}
@@ -380,12 +378,10 @@ const ViewWorkouts = () => {
                       </Select>
                       
                       <div className="flex space-x-2">
-                        <Input
-                          type="number"
+                        <NumberInput
                           value={newExerciseSets}
-                          onChange={(e) => setNewExerciseSets(parseInt(e.target.value) || 0)}
-                          min="1"
-                          placeholder="Sets"
+                          onChange={setNewExerciseSets}
+                          min={1}
                           className="w-24 bg-zinc-800 border-zinc-700"
                         />
                         <Button 
