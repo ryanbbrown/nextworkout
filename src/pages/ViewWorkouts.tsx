@@ -274,8 +274,8 @@ const ViewWorkouts = () => {
       </main>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto rounded-xl">
-          <ScrollArea className="max-h-[80vh] overflow-y-auto pr-4">
+        <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto rounded-xl overflow-y-scroll">
+          <ScrollArea className="max-h-[80vh] pr-4">
             <DialogHeader>
               <DialogTitle>Edit Workout</DialogTitle>
               <DialogDescription className="text-zinc-400">
@@ -334,7 +334,7 @@ const ViewWorkouts = () => {
                         value={exercisesToRemove.includes(ex.id) ? 0 : (exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets)}
                         onChange={(e) => handleSetsChange(ex.id, parseInt(e.target.value) || 0)}
                         min="0"
-                        className="w-20 bg-zinc-800 border-zinc-700"
+                        className="w-20 bg-zinc-800 border-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   ))}
@@ -358,7 +358,7 @@ const ViewWorkouts = () => {
                           );
                         }}
                         min="1"
-                        className="w-20 bg-zinc-800 border-zinc-700"
+                        className="w-20 bg-zinc-800 border-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   ))}
@@ -367,10 +367,10 @@ const ViewWorkouts = () => {
                     <h4 className="text-sm font-medium mb-1.5">Add Exercise</h4>
                     <div className="flex flex-col space-y-2">
                       <Select value={selectedExerciseId} onValueChange={setSelectedExerciseId}>
-                        <SelectTrigger className="w-full bg-zinc-800 border-zinc-700">
+                        <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 focus:ring-0 focus:ring-offset-0 focus:outline-none">
                           <SelectValue placeholder="Select an exercise" />
                         </SelectTrigger>
-                        <SelectContent className="bg-zinc-800 border-zinc-700">
+                        <SelectContent className="bg-zinc-800 border-zinc-700 focus:ring-0 focus:ring-offset-0 focus:outline-none">
                           {getAvailableExercises().map((exercise: Exercise) => (
                             <SelectItem key={exercise.id} value={exercise.id}>
                               {exercise.name}
@@ -386,7 +386,7 @@ const ViewWorkouts = () => {
                           onChange={(e) => setNewExerciseSets(parseInt(e.target.value) || 0)}
                           min="1"
                           placeholder="Sets"
-                          className="w-24 bg-zinc-800 border-zinc-700"
+                          className="w-24 bg-zinc-800 border-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                         <Button 
                           onClick={handleAddExercise}
