@@ -116,7 +116,9 @@ const ViewWorkouts = () => {
   const handleSetsChange = (exerciseId: string, newSets: number) => {
     if (newSets === 0) {
       // Mark for removal
-      setExercisesToRemove(prev => [...prev, exerciseId]);
+      setExercisesToRemove(prev => 
+        prev.includes(exerciseId) ? prev : [...prev, exerciseId]
+      );
     } else {
       // Remove from exercisesToRemove if it was previously marked
       setExercisesToRemove(prev => prev.filter(id => id !== exerciseId));
@@ -146,13 +148,13 @@ const ViewWorkouts = () => {
       });
       
       // Update the selected workout with the new exercise
-      setSelectedWorkout({
-        ...selectedWorkout,
+      setSelectedWorkout(prev => ({
+        ...prev,
         workout_exercises: [
-          ...(selectedWorkout.workout_exercises || []),
+          ...(prev.workout_exercises || []),
           result
         ]
-      });
+      }));
       
       // Add to exercise updates
       setExerciseUpdates(prev => [...prev, { id: result.id, sets: result.sets }]);
@@ -301,15 +303,6 @@ const ViewWorkouts = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium">Exercise Sets</label>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                    className="h-8 bg-red-900 hover:bg-red-800"
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Delete Workout
-                  </Button>
                 </div>
                 
                 {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, index: number) => (
@@ -327,7 +320,7 @@ const ViewWorkouts = () => {
                     </span>
                     <Input
                       type="number"
-                      value={exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets}
+                      value={exercisesToRemove.includes(ex.id) ? 0 : (exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets)}
                       onChange={(e) => handleSetsChange(ex.id, parseInt(e.target.value) || 0)}
                       min="0"
                       className="w-20 bg-zinc-800 border-zinc-700"
@@ -380,13 +373,23 @@ const ViewWorkouts = () => {
             </div>
           )}
 
-          <DialogFooter className="flex justify-center">
+          <DialogFooter className="flex flex-col items-center gap-2 mt-4">
             <Button 
               onClick={handleSaveWorkout}
               disabled={updateWorkoutMutation.isPending}
               className="bg-purple-600 hover:bg-purple-700 text-white w-1/2"
             >
               {updateWorkoutMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+            
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              className="h-8 bg-red-900 hover:bg-red-800 w-1/2"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete Workout
             </Button>
           </DialogFooter>
         </DialogContent>
