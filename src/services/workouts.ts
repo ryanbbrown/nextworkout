@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Exercise } from './exercises';
@@ -47,7 +46,6 @@ export const fetchWorkouts = async () => {
 
 // Create a new workout with exercises
 export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id' | 'created_at' | 'updated_at'>[]) => {
-  // Start a transaction
   const { data: workoutData, error: workoutError } = await supabase
     .from('workouts')
     .insert(workout)
@@ -61,7 +59,6 @@ export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercis
   
   const workoutId = workoutData.id;
   
-  // Now add the workout exercises
   if (workoutExercises.length > 0) {
     const exercisesWithWorkoutId = workoutExercises.map(exercise => ({
       ...exercise,
@@ -77,7 +74,6 @@ export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercis
       throw exercisesError;
     }
     
-    // Update the last_performed timestamp for each exercise
     for (const exercise of workoutExercises) {
       await supabase
         .from('exercises')
@@ -89,20 +85,65 @@ export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercis
   return workoutData as Workout;
 };
 
+// Delete a workout and its exercises
+export const deleteWorkout = async (workoutId: string) => {
+  const { error: exercisesError } = await supabase
+    .from('workout_exercises')
+    .delete()
+    .eq('workout_id', workoutId);
+  
+  if (exercisesError) {
+    console.error('Error deleting workout exercises:', exercisesError);
+    throw exercisesError;
+  }
+  
+  const { error: workoutError } = await supabase
+    .from('workouts')
+    .delete()
+    .eq('id', workoutId);
+  
+  if (workoutError) {
+    console.error('Error deleting workout:', workoutError);
+    throw workoutError;
+  }
+  
+  return workoutId;
+};
+
+// Add a new exercise to an existing workout
+export const addExerciseToWorkout = async (workoutId: string, exerciseId: string, sets: number) => {
+  const { data, error } = await supabase
+    .from('workout_exercises')
+    .insert({
+      workout_id: workoutId,
+      exercise_id: exerciseId,
+      sets: sets,
+    })
+    .select('*, exercise:exercises(*)')
+    .single();
+  
+  if (error) {
+    console.error('Error adding exercise to workout:', error);
+    throw error;
+  }
+  
+  return data as WorkoutExercise;
+};
+
 // Update a workout's date or exercise sets
 export const updateWorkout = async ({
   workoutId,
   newDate,
-  exerciseUpdates
+  exerciseUpdates,
+  exercisesToRemove
 }: {
   workoutId: string,
   newDate?: Date,
-  exerciseUpdates?: { id: string, sets: number }[]
+  exerciseUpdates?: { id: string, sets: number }[],
+  exercisesToRemove?: string[]
 }) => {
-  // Start transaction for updates
   const updates = [];
 
-  // Update workout date if provided
   if (newDate) {
     const { error: workoutError } = await supabase
       .from('workouts')
@@ -118,7 +159,6 @@ export const updateWorkout = async ({
     }
   }
   
-  // Update workout exercises if provided
   if (exerciseUpdates && exerciseUpdates.length > 0) {
     for (const update of exerciseUpdates) {
       const { error: exerciseError } = await supabase
@@ -136,7 +176,20 @@ export const updateWorkout = async ({
     }
   }
   
-  // Fetch the updated workout
+  if (exercisesToRemove && exercisesToRemove.length > 0) {
+    for (const exerciseId of exercisesToRemove) {
+      const { error: deleteError } = await supabase
+        .from('workout_exercises')
+        .delete()
+        .eq('id', exerciseId);
+      
+      if (deleteError) {
+        console.error('Error removing exercise from workout:', deleteError);
+        throw deleteError;
+      }
+    }
+  }
+  
   const { data, error } = await supabase
     .from('workouts')
     .select(`
@@ -185,6 +238,32 @@ export const useUpdateWorkout = () => {
   
   return useMutation({
     mutationFn: updateWorkout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workouts'] });
+    }
+  });
+};
+
+export const useDeleteWorkout = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: deleteWorkout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workouts'] });
+    }
+  });
+};
+
+export const useAddExerciseToWorkout = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ workoutId, exerciseId, sets }: { 
+      workoutId: string, 
+      exerciseId: string, 
+      sets: number 
+    }) => addExerciseToWorkout(workoutId, exerciseId, sets),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workouts'] });
     }
