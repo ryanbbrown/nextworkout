@@ -3,8 +3,7 @@ import * as React from "react"
 import { ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// Change the interface to not extend HTMLAttributes<HTMLDivElement>
-// Instead, pull in just the props we need
+// Define a clear interface that doesn't extend HTMLAttributes to avoid conflicts
 interface NumberInputProps {
   value: number
   onChange: (value: number) => void
@@ -13,10 +12,9 @@ interface NumberInputProps {
   className?: string
   disabled?: boolean
   step?: number
-  // Add HTML div attributes we might need without the conflicting onChange
-  "aria-label"?: string
 }
 
+// Use intersection type with Omit to avoid the onChange conflict
 const NumberInput = React.forwardRef<HTMLDivElement, NumberInputProps & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>>(
   ({ value, onChange, min = 0, max = Infinity, className, disabled = false, step = 1, ...props }, ref) => {
     const handleIncrement = () => {

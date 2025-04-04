@@ -96,25 +96,31 @@
   }
 }
 
-/* Hide scrollbar when not in use but keep functionality */
+/* Hide scrollbar completely but keep functionality */
 ::-webkit-scrollbar {
   width: 0;
+  height: 0;
+  display: none;
   background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  background: transparent;
+  width: 0;
+  height: 0;
 }
 
 .overflow-auto,
 .overflow-y-auto,
 .overflow-x-auto {
   scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 .overflow-auto::-webkit-scrollbar,
 .overflow-y-auto::-webkit-scrollbar,
 .overflow-x-auto::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Edge */
+  width: 0;
+  height: 0;
 }
