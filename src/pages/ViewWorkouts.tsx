@@ -35,6 +35,7 @@ import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Select,
   SelectContent,
@@ -50,6 +51,7 @@ const ViewWorkouts = () => {
   const deleteWorkoutMutation = useDeleteWorkout();
   const addExerciseMutation = useAddExerciseToWorkout();
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // State for edit dialog
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -141,10 +143,12 @@ const ViewWorkouts = () => {
     }
     
     try {
+      // Add user_id to the request
       const result = await addExerciseMutation.mutateAsync({
         workoutId: selectedWorkout.id,
         exerciseId: selectedExerciseId,
-        sets: newExerciseSets
+        sets: newExerciseSets,
+        userId: user?.id  // Pass the current user ID
       });
       
       // Update the selected workout with the new exercise
@@ -197,6 +201,12 @@ const ViewWorkouts = () => {
         variant: "destructive",
       });
     }
+  };
+
+  // Handle closing delete dialog without deleting
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+    // Don't close the edit dialog when canceling the delete
   };
 
   return (
@@ -396,7 +406,10 @@ const ViewWorkouts = () => {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog 
+        open={isDeleteDialogOpen} 
+        onOpenChange={(open) => !open && handleCancelDelete()}
+      >
         <AlertDialogContent className="bg-zinc-900 border border-zinc-800 text-foreground">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center">
@@ -408,7 +421,10 @@ const ViewWorkouts = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700">
+            <AlertDialogCancel 
+              className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
+              onClick={handleCancelDelete}
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction

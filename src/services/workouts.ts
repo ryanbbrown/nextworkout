@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Exercise } from './exercises';
@@ -111,13 +112,14 @@ export const deleteWorkout = async (workoutId: string) => {
 };
 
 // Add a new exercise to an existing workout
-export const addExerciseToWorkout = async (workoutId: string, exerciseId: string, sets: number) => {
+export const addExerciseToWorkout = async (workoutId: string, exerciseId: string, sets: number, userId?: string) => {
   const { data, error } = await supabase
     .from('workout_exercises')
     .insert({
       workout_id: workoutId,
       exercise_id: exerciseId,
       sets: sets,
+      user_id: userId, // Include user_id in the insert
     })
     .select('*, exercise:exercises(*)')
     .single();
@@ -259,11 +261,12 @@ export const useAddExerciseToWorkout = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ workoutId, exerciseId, sets }: { 
+    mutationFn: ({ workoutId, exerciseId, sets, userId }: { 
       workoutId: string, 
       exerciseId: string, 
-      sets: number 
-    }) => addExerciseToWorkout(workoutId, exerciseId, sets),
+      sets: number,
+      userId?: string
+    }) => addExerciseToWorkout(workoutId, exerciseId, sets, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workouts'] });
     }
