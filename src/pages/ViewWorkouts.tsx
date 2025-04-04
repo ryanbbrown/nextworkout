@@ -36,6 +36,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -63,6 +64,14 @@ const ViewWorkouts = () => {
   const [selectedExerciseId, setSelectedExerciseId] = useState<string>("");
   const [newExerciseSets, setNewExerciseSets] = useState<number>(3);
   
+  // New state for temporary new exercises (not yet saved to backend)
+  const [tempNewExercises, setTempNewExercises] = useState<{
+    id: string;
+    exercise_id: string;
+    sets: number;
+    exercise?: Exercise;
+  }[]>([]);
+  
   // State for delete dialog
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -75,6 +84,7 @@ const ViewWorkouts = () => {
     setExercisesToRemove([]);
     setSelectedExerciseId("");
     setNewExerciseSets(3);
+    setTempNewExercises([]);
     
     // Initialize exercise updates with current values
     if (workout.workout_exercises) {
@@ -92,6 +102,7 @@ const ViewWorkouts = () => {
   // Handle saving workout changes
   const handleSaveWorkout = async () => {
     try {
+      // First save the workout date and remove exercises
       await updateWorkoutMutation.mutateAsync({
         workoutId: selectedWorkout.id,
         newDate: selectedDate,
@@ -99,7 +110,21 @@ const ViewWorkouts = () => {
         exercisesToRemove
       });
       
+      // Then add any new exercises
+      if (tempNewExercises.length > 0) {
+        for (const exercise of tempNewExercises) {
+          await addExerciseMutation.mutateAsync({
+            workoutId: selectedWorkout.id,
+            exerciseId: exercise.exercise_id,
+            sets: exercise.sets,
+            userId: user?.id
+          });
+        }
+      }
+      
       setIsEditDialogOpen(false);
+      setTempNewExercises([]); // Clear temp exercises after saving
+      
       toast({
         title: "Workout updated",
         description: "Your workout has been updated successfully.",
@@ -131,8 +156,8 @@ const ViewWorkouts = () => {
     );
   };
   
-  // Handle adding a new exercise to the workout
-  const handleAddExercise = async () => {
+  // Handle adding a new exercise to the workout (but only in UI until saved)
+  const handleAddExercise = () => {
     if (!selectedExerciseId || newExerciseSets <= 0) {
       toast({
         title: "Invalid input",
@@ -142,43 +167,30 @@ const ViewWorkouts = () => {
       return;
     }
     
-    try {
-      // Add user_id to the request
-      const result = await addExerciseMutation.mutateAsync({
-        workoutId: selectedWorkout.id,
-        exerciseId: selectedExerciseId,
-        sets: newExerciseSets,
-        userId: user?.id  // Pass the current user ID
-      });
-      
-      // Update the selected workout with the new exercise
-      setSelectedWorkout(prev => ({
-        ...prev,
-        workout_exercises: [
-          ...(prev.workout_exercises || []),
-          result
-        ]
-      }));
-      
-      // Add to exercise updates
-      setExerciseUpdates(prev => [...prev, { id: result.id, sets: result.sets }]);
-      
-      // Reset selection
-      setSelectedExerciseId("");
-      setNewExerciseSets(3);
-      
-      toast({
-        title: "Exercise added",
-        description: "The exercise has been added to your workout.",
-      });
-    } catch (error) {
-      console.error("Error adding exercise:", error);
-      toast({
-        title: "Error",
-        description: "Failed to add exercise to workout.",
-        variant: "destructive",
-      });
-    }
+    const selectedExercise = exercises?.find(ex => ex.id === selectedExerciseId);
+    if (!selectedExercise) return;
+    
+    // Create a temporary ID for the new exercise
+    const tempId = `temp-${Date.now()}`;
+    
+    // Add to temporary exercises
+    const newTempExercise = {
+      id: tempId,
+      exercise_id: selectedExerciseId,
+      sets: newExerciseSets,
+      exercise: selectedExercise
+    };
+    
+    setTempNewExercises(prev => [...prev, newTempExercise]);
+    
+    // Reset selection
+    setSelectedExerciseId("");
+    setNewExerciseSets(3);
+    
+    toast({
+      title: "Exercise added",
+      description: "The exercise has been added to your workout. Click Save Changes to confirm.",
+    });
   };
   
   // Handle deleting the workout
@@ -207,6 +219,20 @@ const ViewWorkouts = () => {
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
     // Don't close the edit dialog when canceling the delete
+  };
+
+  // Filter out exercises that are already in the workout (including temp ones)
+  const getAvailableExercises = () => {
+    if (!exercises) return [];
+    
+    return exercises.filter(exercise => 
+      // Not in original workout exercises (that aren't marked for removal)
+      !selectedWorkout?.workout_exercises?.some(
+        (we: WorkoutExercise) => we.exercise_id === exercise.id && !exercisesToRemove.includes(we.id)
+      ) &&
+      // Not in temporary new exercises
+      !tempNewExercises.some(te => te.exercise_id === exercise.id)
+    );
   };
 
   return (
@@ -241,11 +267,11 @@ const ViewWorkouts = () => {
                 </Button>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
+                <ul className="space-y-1">
                   {workout.workout_exercises?.map((workoutExercise, index) => (
                     <li 
                       key={index}
-                      className="flex justify-between items-center text-sm py-2 border-b border-zinc-800 last:border-0"
+                      className="flex justify-between items-center text-sm py-1 border-b border-zinc-800 last:border-0"
                     >
                       <span>{workoutExercise.exercise?.name}</span>
                       <span className="text-zinc-400">
@@ -273,135 +299,154 @@ const ViewWorkouts = () => {
       {/* Edit Workout Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="bg-zinc-900 border border-zinc-800 text-foreground w-[95%] max-w-lg mx-auto rounded-xl">
-          <DialogHeader>
-            <DialogTitle>Edit Workout</DialogTitle>
-            <DialogDescription className="text-zinc-400">
-              Edit the date, exercises, or sets for this workout.
-            </DialogDescription>
-          </DialogHeader>
+          <ScrollArea className="max-h-[80vh] overflow-y-auto pr-4">
+            <DialogHeader>
+              <DialogTitle>Edit Workout</DialogTitle>
+              <DialogDescription className="text-zinc-400">
+                Edit the date, exercises, or sets for this workout.
+              </DialogDescription>
+            </DialogHeader>
 
-          {selectedWorkout && (
-            <div className="space-y-4">
-              {/* Date Picker */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Workout Date</label>
-                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left border-zinc-700 bg-zinc-800"
-                    >
-                      {selectedDate ? format(selectedDate, 'PPP') : 'Select date'}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-zinc-900 border border-zinc-700">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={(date) => {
-                        setSelectedDate(date);
-                        setIsCalendarOpen(false);
-                      }}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {/* Exercise Sets Inputs */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Exercise Sets</label>
+            {selectedWorkout && (
+              <div className="space-y-4">
+                {/* Date Picker */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Workout Date</label>
+                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left border-zinc-700 bg-zinc-800"
+                      >
+                        {selectedDate ? format(selectedDate, 'PPP') : 'Select date'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-zinc-900 border border-zinc-700">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(date) => {
+                          setSelectedDate(date);
+                          setIsCalendarOpen(false);
+                        }}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
-                
-                {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, index: number) => (
-                  <div 
-                    key={ex.id} 
-                    className={`flex items-center justify-between p-2 rounded-md ${
-                      exercisesToRemove.includes(ex.id) ? 'bg-red-900/20 border border-red-900/40' : ''
-                    }`}
-                  >
-                    <span className="text-sm">
-                      {ex.exercise?.name}
-                      {exercisesToRemove.includes(ex.id) && (
-                        <span className="text-xs ml-2 text-red-400">(Will be removed)</span>
-                      )}
-                    </span>
-                    <Input
-                      type="number"
-                      value={exercisesToRemove.includes(ex.id) ? 0 : (exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets)}
-                      onChange={(e) => handleSetsChange(ex.id, parseInt(e.target.value) || 0)}
-                      min="0"
-                      className="w-20 bg-zinc-800 border-zinc-700"
-                    />
-                  </div>
-                ))}
 
-                {/* Add New Exercise */}
-                <div className="pt-4 border-t border-zinc-800 mt-4">
-                  <h4 className="text-sm font-medium mb-2">Add Exercise</h4>
-                  <div className="flex flex-col space-y-2">
-                    <Select value={selectedExerciseId} onValueChange={setSelectedExerciseId}>
-                      <SelectTrigger className="w-full bg-zinc-800 border-zinc-700">
-                        <SelectValue placeholder="Select an exercise" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-zinc-800 border-zinc-700">
-                        {exercises?.filter(exercise => 
-                          !selectedWorkout.workout_exercises?.some(
-                            (we: WorkoutExercise) => we.exercise_id === exercise.id && !exercisesToRemove.includes(we.id)
-                          )
-                        ).map((exercise: Exercise) => (
-                          <SelectItem key={exercise.id} value={exercise.id}>
-                            {exercise.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    
-                    <div className="flex space-x-2">
+                {/* Exercise Sets Inputs */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Exercise Sets</label>
+                  </div>
+                  
+                  {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, index: number) => (
+                    <div 
+                      key={ex.id} 
+                      className={`flex items-center justify-between p-2 rounded-md ${
+                        exercisesToRemove.includes(ex.id) ? 'bg-red-900/20 border border-red-900/40' : ''
+                      }`}
+                    >
+                      <span className="text-sm">
+                        {ex.exercise?.name}
+                        {exercisesToRemove.includes(ex.id) && (
+                          <span className="text-xs ml-2 text-red-400">(Will be removed)</span>
+                        )}
+                      </span>
                       <Input
                         type="number"
-                        value={newExerciseSets}
-                        onChange={(e) => setNewExerciseSets(parseInt(e.target.value) || 0)}
-                        min="1"
-                        placeholder="Sets"
-                        className="w-24 bg-zinc-800 border-zinc-700"
+                        value={exercisesToRemove.includes(ex.id) ? 0 : (exerciseUpdates.find(update => update.id === ex.id)?.sets || ex.sets)}
+                        onChange={(e) => handleSetsChange(ex.id, parseInt(e.target.value) || 0)}
+                        min="0"
+                        className="w-20 bg-zinc-800 border-zinc-700"
                       />
-                      <Button 
-                        onClick={handleAddExercise}
-                        disabled={!selectedExerciseId || newExerciseSets <= 0 || addExerciseMutation.isPending}
-                        className="bg-purple-700 hover:bg-purple-800"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add
-                      </Button>
+                    </div>
+                  ))}
+                  
+                  {/* Temporary new exercises (not yet saved) */}
+                  {tempNewExercises.map((ex) => (
+                    <div key={ex.id} className="flex items-center justify-between p-2 rounded-md bg-purple-900/20 border border-purple-900/40">
+                      <span className="text-sm">
+                        {ex.exercise?.name}
+                        <span className="text-xs ml-2 text-purple-400">(New)</span>
+                      </span>
+                      <Input
+                        type="number"
+                        value={ex.sets}
+                        onChange={(e) => {
+                          const newSets = parseInt(e.target.value) || 0;
+                          setTempNewExercises(prev => 
+                            prev.map(item => item.id === ex.id ? {...item, sets: newSets} : item)
+                          );
+                        }}
+                        min="1"
+                        className="w-20 bg-zinc-800 border-zinc-700"
+                      />
+                    </div>
+                  ))}
+
+                  {/* Add New Exercise */}
+                  <div className="pt-4 border-t border-zinc-800 mt-4">
+                    <h4 className="text-sm font-medium mb-2">Add Exercise</h4>
+                    <div className="flex flex-col space-y-2">
+                      <Select value={selectedExerciseId} onValueChange={setSelectedExerciseId}>
+                        <SelectTrigger className="w-full bg-zinc-800 border-zinc-700">
+                          <SelectValue placeholder="Select an exercise" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-zinc-800 border-zinc-700">
+                          {getAvailableExercises().map((exercise: Exercise) => (
+                            <SelectItem key={exercise.id} value={exercise.id}>
+                              {exercise.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      
+                      <div className="flex space-x-2">
+                        <Input
+                          type="number"
+                          value={newExerciseSets}
+                          onChange={(e) => setNewExerciseSets(parseInt(e.target.value) || 0)}
+                          min="1"
+                          placeholder="Sets"
+                          className="w-24 bg-zinc-800 border-zinc-700"
+                        />
+                        <Button 
+                          onClick={handleAddExercise}
+                          disabled={!selectedExerciseId || newExerciseSets <= 0}
+                          className="bg-purple-700 hover:bg-purple-800"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <DialogFooter className="flex flex-col items-center gap-2 mt-4">
-            <Button 
-              onClick={handleSaveWorkout}
-              disabled={updateWorkoutMutation.isPending}
-              className="bg-purple-600 hover:bg-purple-700 text-white w-1/2"
-            >
-              {updateWorkoutMutation.isPending ? "Saving..." : "Save Changes"}
-            </Button>
-            
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setIsDeleteDialogOpen(true)}
-              className="h-8 bg-red-900 hover:bg-red-800 w-1/2"
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete Workout
-            </Button>
-          </DialogFooter>
+            <DialogFooter className="flex flex-col mt-6 space-y-2">
+              <Button 
+                onClick={handleSaveWorkout}
+                disabled={updateWorkoutMutation.isPending}
+                className="bg-purple-600 hover:bg-purple-700 text-white w-full h-10"
+              >
+                {updateWorkoutMutation.isPending ? "Saving..." : "Save Changes"}
+              </Button>
+              
+              <Button
+                variant="destructive"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                className="bg-red-900 hover:bg-red-800 w-full h-10"
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Delete Workout
+              </Button>
+            </DialogFooter>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
