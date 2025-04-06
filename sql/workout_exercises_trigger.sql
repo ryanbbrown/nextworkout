@@ -10,6 +10,9 @@ BEGIN
     WHERE wed.exercise_id = e.id
     AND wed.user_id = e.user_id
   )
+
+  -- Update for the relevant exercise_id and user_id
+  -- NEW = NULL for DELETE bc result of operation is to get rid of the record
   WHERE e.id = (
     CASE
       WHEN TG_OP = 'DELETE' THEN OLD.exercise_id
@@ -23,7 +26,7 @@ BEGIN
     END
   );
 
-  -- Return the appropriate record based on the operation
+  -- These return values are formality bc the trigger is AFTER
   IF TG_OP = 'DELETE' THEN
     RETURN OLD;
   ELSE
