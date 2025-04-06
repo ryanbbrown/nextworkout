@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Exercise } from './exercises';
@@ -12,6 +11,7 @@ export interface WorkoutExercise {
   created_at: string;
   updated_at: string | null;
   exercise?: Exercise;
+  workout_date?: string; // Added from the view
 }
 
 export interface Workout {
@@ -75,12 +75,8 @@ export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercis
       throw exercisesError;
     }
     
-    for (const exercise of workoutExercises) {
-      await supabase
-        .from('exercises')
-        .update({ last_performed: new Date().toISOString() })
-        .eq('id', exercise.exercise_id);
-    }
+    // The trigger will now handle updating last_performed
+    // No need to manually update last_performed dates here
   }
   
   return workoutData as Workout;
@@ -108,6 +104,9 @@ export const deleteWorkout = async (workoutId: string) => {
     throw workoutError;
   }
   
+  // The trigger will now handle updating last_performed
+  // after the workout exercises are deleted
+  
   return workoutId;
 };
 
@@ -128,6 +127,8 @@ export const addExerciseToWorkout = async (workoutId: string, exerciseId: string
     console.error('Error adding exercise to workout:', error);
     throw error;
   }
+  
+  // The trigger will now handle updating last_performed
   
   return data as WorkoutExercise;
 };
