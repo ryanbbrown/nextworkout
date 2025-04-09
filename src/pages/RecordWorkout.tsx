@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Calendar } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
@@ -12,6 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
 import { useExercisesForGroups } from "@/hooks/useExercisesForGroups";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 const RecordWorkout = () => {
   const { user } = useAuth();
@@ -29,6 +33,7 @@ const RecordWorkout = () => {
     sets: number;
   }[]>([]);
   const [notes, setNotes] = useState<string>("");
+  const [workoutDate, setWorkoutDate] = useState<Date>(new Date()); // Initialize with today's date
   
   // Mutations
   const createWorkoutMutation = useCreateWorkout();
@@ -79,16 +84,14 @@ const RecordWorkout = () => {
       user_id: user?.id || ''
     }));
     
-    const now = new Date();
-    
-    // Create the workout
+    // Create the workout using the selected date
     createWorkoutMutation.mutate({
       workout: {
         user_id: user?.id || '',
         notes: notes.trim() || null,
-        created_at: now.toISOString(),
+        created_at: new Date().toISOString(),
         updated_at: null,
-        workout_date: now.toISOString()
+        workout_date: workoutDate.toISOString() // Use the selected date
       },
       workoutExercises
     }, {
@@ -118,6 +121,33 @@ const RecordWorkout = () => {
             <CardTitle className="text-lg">This Workout</CardTitle>
           </CardHeader>
           <CardContent className="p-4 flex flex-col">
+            {/* Date Picker */}
+            <div className="mb-3">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal border-zinc-800 bg-zinc-900",
+                      !workoutDate && "text-muted-foreground"
+                    )}
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {workoutDate ? format(workoutDate, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-zinc-950 border border-zinc-800" align="start">
+                  <CalendarComponent
+                    mode="single"
+                    selected={workoutDate}
+                    onSelect={(date) => date && setWorkoutDate(date)}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
             <div className="h-[120px] mb-3">
               {selectedExercises.length === 0 ? (
                 <p className="text-sm text-neutral-400">Select exercises below to add to your workout</p>
