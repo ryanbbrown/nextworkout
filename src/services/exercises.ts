@@ -1,6 +1,6 @@
-
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from './queryKeys';
 
 export interface Exercise {
   id: string;
@@ -104,14 +104,14 @@ export const deleteExercise = async (id: string) => {
 // React Query hooks
 export const useExercises = () => {
   return useQuery({
-    queryKey: ['exercises'],
+    queryKey: queryKeys.exercises.list(),
     queryFn: fetchExercises
   });
 };
 
 export const useExercisesByGroup = (groupId: string) => {
   return useQuery({
-    queryKey: ['exercises', groupId],
+    queryKey: queryKeys.exercises.byGroup(groupId),
     queryFn: () => fetchExercisesByGroup(groupId),
     enabled: !!groupId
   });
@@ -123,8 +123,8 @@ export const useCreateExercise = () => {
   return useMutation({
     mutationFn: createExercise,
     onSuccess: (exercise) => {
-      queryClient.invalidateQueries({ queryKey: ['exercises'] });
-      queryClient.invalidateQueries({ queryKey: ['exercises', exercise.group_id] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exercises.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exercises.byGroup(exercise.group_id) });
     }
   });
 };
@@ -135,8 +135,8 @@ export const useUpdateExercise = () => {
   return useMutation({
     mutationFn: updateExercise,
     onSuccess: (exercise) => {
-      queryClient.invalidateQueries({ queryKey: ['exercises'] });
-      queryClient.invalidateQueries({ queryKey: ['exercises', exercise.group_id] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exercises.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exercises.byGroup(exercise.group_id) });
     }
   });
 };
@@ -147,7 +147,7 @@ export const useDeleteExercise = () => {
   return useMutation({
     mutationFn: deleteExercise,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exercises.all });
     }
   });
 };

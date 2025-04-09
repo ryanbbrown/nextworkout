@@ -1,12 +1,12 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchWorkouts, createWorkout, updateWorkout, deleteWorkout, addExerciseToWorkout } from './api';
 import { Workout, WorkoutExercise } from './types';
+import { queryKeys } from '../queryKeys';
 
 // React Query hooks
 export const useWorkouts = () => {
   return useQuery({
-    queryKey: ['workouts'],
+    queryKey: queryKeys.workouts.list(),
     queryFn: fetchWorkouts
   });
 };
@@ -20,8 +20,7 @@ export const useCreateWorkout = () => {
       workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id' | 'created_at' | 'updated_at'>[] 
     }) => createWorkout(workout, workoutExercises),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workouts'] });
-      queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workouts.all });
     }
   });
 };
@@ -31,8 +30,9 @@ export const useUpdateWorkout = () => {
   
   return useMutation({
     mutationFn: updateWorkout,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workouts'] });
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workouts.detail(data.id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workouts.list() });
     }
   });
 };
@@ -42,8 +42,9 @@ export const useDeleteWorkout = () => {
   
   return useMutation({
     mutationFn: deleteWorkout,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workouts'] });
+    onSuccess: (workoutId) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workouts.detail(workoutId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workouts.list() });
     }
   });
 };
@@ -58,8 +59,8 @@ export const useAddExerciseToWorkout = () => {
       sets: number,
       userId?: string
     }) => addExerciseToWorkout(workoutId, exerciseId, sets, userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workouts'] });
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workouts.detail(data.workout_id) });
     }
   });
 };

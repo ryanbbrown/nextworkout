@@ -1,6 +1,6 @@
-
 import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from './queryKeys';
 
 export interface ExerciseGroup {
   id: string;
@@ -19,10 +19,7 @@ export const fetchExerciseGroups = async () => {
       .order('id');
     
     if (error) {
-      console.error('Error fetching exercise groups:', error);
-      if (error.code === '42P01') {
-        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
-      }
+      console.error('Supabase error fetching exercise groups:', error);
       throw error;
     }
     
@@ -43,16 +40,13 @@ export const createExerciseGroup = async (exerciseGroup: Omit<ExerciseGroup, 'id
       .single();
     
     if (error) {
-      console.error('Error creating exercise group:', error);
-      if (error.code === '42P01') {
-        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
-      }
+      console.error('Supabase error creating exercise group:', error);
       throw error;
     }
     
     return data as ExerciseGroup;
   } catch (error: any) {
-    console.error('Detailed error in createExerciseGroup:', error);
+    console.error('Error in createExerciseGroup:', error);
     throw error;
   }
 };
@@ -72,10 +66,7 @@ export const updateExerciseGroup = async (exerciseGroup: ExerciseGroup) => {
       .single();
     
     if (error) {
-      console.error('Error updating exercise group:', error);
-      if (error.code === '42P01') {
-        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
-      }
+      console.error('Supabase error updating exercise group:', error);
       throw error;
     }
     
@@ -95,10 +86,7 @@ export const deleteExerciseGroup = async (id: string) => {
       .eq('id', id);
     
     if (error) {
-      console.error('Error deleting exercise group:', error);
-      if (error.code === '42P01') {
-        throw new Error('The exercise_groups table does not exist. Please set up your database first.');
-      }
+      console.error('Supabase error deleting exercise group:', error);
       throw error;
     }
     
@@ -112,7 +100,7 @@ export const deleteExerciseGroup = async (id: string) => {
 // React Query hooks
 export const useExerciseGroups = () => {
   return useQuery({
-    queryKey: ['exerciseGroups'],
+    queryKey: queryKeys.exerciseGroups.list(),
     queryFn: fetchExerciseGroups
   });
 };
@@ -123,7 +111,7 @@ export const useCreateExerciseGroup = () => {
   return useMutation({
     mutationFn: createExerciseGroup,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['exerciseGroups'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
     }
   });
 };
@@ -134,7 +122,7 @@ export const useUpdateExerciseGroup = () => {
   return useMutation({
     mutationFn: updateExerciseGroup,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['exerciseGroups'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
     }
   });
 };
@@ -145,7 +133,7 @@ export const useDeleteExerciseGroup = () => {
   return useMutation({
     mutationFn: deleteExerciseGroup,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['exerciseGroups'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
     }
   });
 };

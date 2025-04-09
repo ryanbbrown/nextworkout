@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import { Workout, WorkoutExercise } from './types';
 
@@ -23,8 +22,12 @@ export const fetchWorkouts = async () => {
   return data as Workout[];
 };
 
+
 // Create a new workout with exercises
-export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id' | 'created_at' | 'updated_at'>[]) => {
+export const createWorkout = async (
+    workout: Omit<Workout, 'id'>,
+    workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id' | 'created_at' | 'updated_at'>[]
+) => {
   const { data: workoutData, error: workoutError } = await supabase
     .from('workouts')
     .insert(workout)
@@ -52,41 +55,28 @@ export const createWorkout = async (workout: Omit<Workout, 'id'>, workoutExercis
       console.error('Error adding workout exercises:', exercisesError);
       throw exercisesError;
     }
-    
-    // The trigger will now handle updating last_performed
-    // No need to manually update last_performed dates here
+
   }
   
   return workoutData as Workout;
 };
 
+
 // Delete a workout and its exercises
 export const deleteWorkout = async (workoutId: string) => {
-  const { error: exercisesError } = await supabase
-    .from('workout_exercises')
-    .delete()
-    .eq('workout_id', workoutId);
-  
-  if (exercisesError) {
-    console.error('Error deleting workout exercises:', exercisesError);
-    throw exercisesError;
-  }
-  
-  const { error: workoutError } = await supabase
+  const { error } = await supabase
     .from('workouts')
     .delete()
     .eq('id', workoutId);
   
-  if (workoutError) {
-    console.error('Error deleting workout:', workoutError);
-    throw workoutError;
+  if (error) {
+    console.error('Error deleting workout:', error);
+    throw error;
   }
-  
-  // The trigger will now handle updating last_performed
-  // after the workout exercises are deleted
   
   return workoutId;
 };
+
 
 // Add a new exercise to an existing workout
 export const addExerciseToWorkout = async (workoutId: string, exerciseId: string, sets: number, userId?: string) => {
@@ -106,12 +96,11 @@ export const addExerciseToWorkout = async (workoutId: string, exerciseId: string
     throw error;
   }
   
-  // The trigger will now handle updating last_performed
-  
   return data as WorkoutExercise;
 };
 
-// Update a workout's date or exercise sets
+
+// Update a workout's date, # of sets for existing exercises, or remove exercises from workout
 export const updateWorkout = async ({
   workoutId,
   newDate,
@@ -138,6 +127,7 @@ export const updateWorkout = async ({
     }
   }
   
+  // Update # of sets for existing exercises
   if (exerciseUpdates && exerciseUpdates.length > 0) {
     for (const update of exerciseUpdates) {
       const { error: exerciseError } = await supabase
@@ -155,17 +145,16 @@ export const updateWorkout = async ({
     }
   }
   
+  // Remove exercises from workout
   if (exercisesToRemove && exercisesToRemove.length > 0) {
-    for (const exerciseId of exercisesToRemove) {
-      const { error: deleteError } = await supabase
-        .from('workout_exercises')
-        .delete()
-        .eq('id', exerciseId);
-      
-      if (deleteError) {
-        console.error('Error removing exercise from workout:', deleteError);
-        throw deleteError;
-      }
+    const { error: deleteError } = await supabase
+      .from('workout_exercises')
+      .delete()
+      .in('id', exercisesToRemove);
+    
+    if (deleteError) {
+      console.error('Error removing exercises from workout:', deleteError);
+      throw deleteError;
     }
   }
   
