@@ -5,7 +5,7 @@ BEGIN
   -- Update last_performed for the affected exercise(s)
   UPDATE exercises e
   SET last_performed = (
-    SELECT MIN(wed.workout_date)
+    SELECT MAX(wed.workout_date)
     FROM workout_exercises_withdate wed
     WHERE wed.exercise_id = e.id
     AND wed.user_id = e.user_id
