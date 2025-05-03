@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +7,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
-import AddExercises from "./pages/AddExercises";
+import EditExercises from "./pages/EditExercises";
 import RecordWorkout from "./pages/RecordWorkout";
 import ViewWorkouts from "./pages/ViewWorkouts";
 import NotFound from "./pages/NotFound";
@@ -45,9 +44,9 @@ const App = () => (
                 <Home />
               </ProtectedRoute>
             } />
-            <Route path="/add-exercises" element={
+            <Route path="/edit-exercises" element={
               <ProtectedRoute>
-                <AddExercises />
+                <EditExercises />
               </ProtectedRoute>
             } />
             <Route path="/record-workout" element={

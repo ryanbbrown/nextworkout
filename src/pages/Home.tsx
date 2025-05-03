@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dumbbell, History, Plus } from "lucide-react";
+import { Dumbbell, History, Plus, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
@@ -55,20 +55,20 @@ const Home = () => {
       <main className="flex-1 p-4 max-w-md mx-auto w-full">
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
-            <Link to="/add-exercises">
+            <Link to="/record-workout">
               <Card className="bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors">
                 <CardContent className="p-6 flex items-center">
                   <Plus className="h-5 w-5 mr-3 text-purple-500" />
-                  <span>Add Exercises</span>
+                  <span>Record Workout</span>
                 </CardContent>
               </Card>
             </Link>
             
-            <Link to="/record-workout">
+            <Link to="/edit-exercises">
               <Card className="bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors">
                 <CardContent className="p-6 flex items-center">
-                  <Dumbbell className="h-5 w-5 mr-3 text-purple-500" />
-                  <span>Record Workout</span>
+                  <Pencil className="h-5 w-5 mr-3 text-purple-500" />
+                  <span>Edit Exercises</span>
                 </CardContent>
               </Card>
             </Link>

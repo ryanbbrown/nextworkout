@@ -13,7 +13,7 @@ import { useExercises, useExercisesByGroup, useCreateExercise, useUpdateExercise
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
 
-const AddExercises = () => {
+const EditExercises = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isReordering, setIsReordering] = useState(false);
@@ -284,7 +284,7 @@ const AddExercises = () => {
         <Link to="/home" className="mr-4">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-xl font-bold">Add Exercises</h1>
+        <h1 className="text-xl font-bold">Edit Exercises</h1>
         
         {!isReordering ? (
           <Button 
@@ -510,4 +510,4 @@ const AddExercises = () => {
   );
 };
 
-export default AddExercises;
+export default EditExercises;
