@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchWorkouts, createWorkout, updateWorkout, deleteWorkout, addExerciseToWorkout } from './api';
+import { fetchWorkouts, postWorkout, updateWorkout, deleteWorkout, postWorkoutExercise } from './api';
 import { Workout, WorkoutExercise } from './types';
 import { queryKeys } from '../queryKeys';
 
@@ -18,7 +18,7 @@ export const useCreateWorkout = () => {
     mutationFn: ({ workout, workoutExercises }: { 
       workout: Omit<Workout, 'id'>, 
       workoutExercises: Omit<WorkoutExercise, 'id' | 'workout_id' | 'created_at' | 'updated_at'>[] 
-    }) => createWorkout(workout, workoutExercises),
+    }) => postWorkout(workout, workoutExercises),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workouts.all });
     }
@@ -58,7 +58,7 @@ export const useAddExerciseToWorkout = () => {
       exerciseId: string, 
       sets: number,
       userId?: string
-    }) => addExerciseToWorkout(workoutId, exerciseId, sets, userId),
+    }) => postWorkoutExercise(workoutId, exerciseId, sets, userId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workouts.detail(data.workout_id) });
     }

@@ -1,17 +1,8 @@
 import { supabase } from '@/lib/supabase';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from './queryKeys';
+import { ExerciseGroup } from './types';
 
-export interface ExerciseGroup {
-  id: string;
-  name: string;
-  color: string;
-  num_exercises_to_show: number;
-  user_id: string;
-}
-
-// Fetch all exercise groups for the current user
-export const fetchExerciseGroups = async () => {
+// List all exercise groups for the current user
+export const listExerciseGroups = async () => {
   try {
     const { data, error } = await supabase
       .from('exercise_groups')
@@ -19,13 +10,13 @@ export const fetchExerciseGroups = async () => {
       .order('id');
     
     if (error) {
-      console.error('Supabase error fetching exercise groups:', error);
+      console.error('Supabase error listing exercise groups:', error);
       throw error;
     }
     
     return data as ExerciseGroup[];
   } catch (error: any) {
-    console.error('Error in fetchExerciseGroups:', error);
+    console.error('Error in listExerciseGroups:', error);
     throw error;
   }
 };
@@ -77,8 +68,8 @@ export const updateExerciseGroup = async (exerciseGroup: ExerciseGroup) => {
   }
 };
 
-// Delete an exercise group
-export const deleteExerciseGroup = async (id: string) => {
+// Remove an exercise group
+export const removeExerciseGroup = async (id: string) => {
   try {
     const { error } = await supabase
       .from('exercise_groups')
@@ -86,54 +77,13 @@ export const deleteExerciseGroup = async (id: string) => {
       .eq('id', id);
     
     if (error) {
-      console.error('Supabase error deleting exercise group:', error);
+      console.error('Supabase error removing exercise group:', error);
       throw error;
     }
     
     return id;
   } catch (error: any) {
-    console.error('Error in deleteExerciseGroup:', error);
+    console.error('Error in removeExerciseGroup:', error);
     throw error;
   }
-};
-
-// React Query hooks
-export const useExerciseGroups = () => {
-  return useQuery({
-    queryKey: queryKeys.exerciseGroups.list(),
-    queryFn: fetchExerciseGroups
-  });
-};
-
-export const useCreateExerciseGroup = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: createExerciseGroup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
-    }
-  });
-};
-
-export const useUpdateExerciseGroup = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: updateExerciseGroup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
-    }
-  });
-};
-
-export const useDeleteExerciseGroup = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: deleteExerciseGroup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
-    }
-  });
-};
+}; 
