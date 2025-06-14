@@ -1,11 +1,10 @@
 import { FastifyInstance } from 'fastify';
 import { Static } from '@fastify/type-provider-typebox';
-import { CreateWorkoutSchema, UpdateWorkoutSchema, WorkoutSchema, CreateWorkoutInputSchema } from '../schemas/workouts.js';
+import { CreateWorkoutSchema, UpdateWorkoutSchema, WorkoutSchema } from '../schemas/workouts.js';
 
 type Workout = Static<typeof WorkoutSchema>;
 type CreateWorkout = Static<typeof CreateWorkoutSchema>;
 type UpdateWorkout = Static<typeof UpdateWorkoutSchema>;
-type CreateWorkoutInput = Static<typeof CreateWorkoutInputSchema>;
 
 interface WorkoutExercise {
     exercise_id: string;
