@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { Static } from '@fastify/type-provider-typebox';
 import { CreateExerciseSchema, UpdateExerciseSchema, ExerciseSchema } from '../schemas/exercises.js';
 
@@ -11,65 +11,55 @@ interface UpdateExerciseParams extends UpdateExercise {
 }
 
 export class ExerciseService {
-    constructor(private fastify: FastifyInstance) { }
-
-    async listExercises() {
-        const { data, error } = await this.fastify.supabase
+    async listExercises(supabase: SupabaseClient) {
+        const { data, error } = await supabase
             .from('exercises')
             .select('*')
             .order('name');
 
         if (error) {
-            this.fastify.log.error('Error listing exercises:', error);
             throw error;
-        }
-
-        // Log the first exercise to see its structure
-        if (data && data.length > 0) {
-            this.fastify.log.info('First exercise data:', JSON.stringify(data[0], null, 2));
         }
 
         return data as Exercise[];
     }
 
-    async listExercisesByGroup(groupId: string) {
+    async listExercisesByGroup(groupId: string, supabase: SupabaseClient) {
         if (!groupId) {
             return [] as Exercise[];
         }
 
-        const { data, error } = await this.fastify.supabase
+        const { data, error } = await supabase
             .from('exercises')
             .select('*')
             .eq('group_id', groupId)
             .order('name');
 
         if (error) {
-            this.fastify.log.error('Error listing exercises by group:', error);
             throw error;
         }
 
         return data as Exercise[];
     }
 
-    async createExercise(exercise: CreateExercise) {
-        const { data, error } = await this.fastify.supabase
+    async createExercise(exercise: CreateExercise, supabase: SupabaseClient) {
+        const { data, error } = await supabase
             .from('exercises')
             .insert(exercise)
             .select()
             .single();
 
         if (error) {
-            this.fastify.log.error('Error creating exercise:', error);
             throw error;
         }
 
         return data as Exercise;
     }
 
-    async updateExercise(params: UpdateExerciseParams) {
+    async updateExercise(params: UpdateExerciseParams, supabase: SupabaseClient) {
         const { exerciseId, ...updates } = params;
 
-        const { data, error } = await this.fastify.supabase
+        const { data, error } = await supabase
             .from('exercises')
             .update(updates)
             .eq('id', exerciseId)
@@ -77,21 +67,19 @@ export class ExerciseService {
             .single();
 
         if (error) {
-            this.fastify.log.error('Error updating exercise:', error);
             throw error;
         }
 
         return data as Exercise;
     }
 
-    async deleteExercise(exerciseId: string) {
-        const { error } = await this.fastify.supabase
+    async deleteExercise(exerciseId: string, supabase: SupabaseClient) {
+        const { error } = await supabase
             .from('exercises')
             .delete()
             .eq('id', exerciseId);
 
         if (error) {
-            this.fastify.log.error('Error removing exercise:', error);
             throw error;
         }
 

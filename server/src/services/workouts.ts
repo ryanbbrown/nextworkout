@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { Static } from '@fastify/type-provider-typebox';
 import { CreateWorkoutSchema, UpdateWorkoutSchema, WorkoutSchema } from '../schemas/workouts.js';
 
@@ -18,10 +18,8 @@ interface UpdateWorkoutParams extends UpdateWorkout {
 }
 
 export class WorkoutService {
-    constructor(private fastify: FastifyInstance) { }
-
-    async listWorkouts() {
-        const { data, error } = await this.fastify.supabase
+    async listWorkouts(supabase: SupabaseClient) {
+        const { data, error } = await supabase
             .from('workouts')
             .select(`
         *,
@@ -33,22 +31,20 @@ export class WorkoutService {
             .order('workout_date', { ascending: false });
 
         if (error) {
-            this.fastify.log.error('Error listing workouts:', error);
             throw error;
         }
 
         return data as Workout[];
     }
 
-    async createWorkout(request: CreateWorkout) {
-        const { data: workoutData, error: workoutError } = await this.fastify.supabase
+    async createWorkout(request: CreateWorkout, supabase: SupabaseClient) {
+        const { data: workoutData, error: workoutError } = await supabase
             .from('workouts')
             .insert(request.workout)
             .select()
             .single();
 
         if (workoutError) {
-            this.fastify.log.error('Error creating workout:', workoutError);
             throw workoutError;
         }
 
@@ -60,12 +56,11 @@ export class WorkoutService {
                 workout_id: workoutId
             }));
 
-            const { error: exercisesError } = await this.fastify.supabase
+            const { error: exercisesError } = await supabase
                 .from('workout_exercises')
                 .insert(exercisesWithWorkoutId);
 
             if (exercisesError) {
-                this.fastify.log.error('Error adding workout exercises:', exercisesError);
                 throw exercisesError;
             }
         }
@@ -73,11 +68,11 @@ export class WorkoutService {
         return workoutData as Workout;
     }
 
-    async updateWorkout(params: UpdateWorkoutParams) {
+    async updateWorkout(params: UpdateWorkoutParams, supabase: SupabaseClient) {
         const { workoutId, newDate, exerciseUpdates, exercisesToRemove } = params;
 
         if (newDate) {
-            const { error: workoutError } = await this.fastify.supabase
+            const { error: workoutError } = await supabase
                 .from('workouts')
                 .update({
                     workout_date: newDate,
@@ -86,14 +81,13 @@ export class WorkoutService {
                 .eq('id', workoutId);
 
             if (workoutError) {
-                this.fastify.log.error('Error updating workout date:', workoutError);
                 throw workoutError;
             }
         }
 
         if (exerciseUpdates && exerciseUpdates.length > 0) {
             for (const update of exerciseUpdates) {
-                const { error: exerciseError } = await this.fastify.supabase
+                const { error: exerciseError } = await supabase
                     .from('workout_exercises')
                     .update({
                         sets: update.sets,
@@ -102,25 +96,23 @@ export class WorkoutService {
                     .eq('id', update.id);
 
                 if (exerciseError) {
-                    this.fastify.log.error('Error updating workout exercise:', exerciseError);
                     throw exerciseError;
                 }
             }
         }
 
         if (exercisesToRemove && exercisesToRemove.length > 0) {
-            const { error: deleteError } = await this.fastify.supabase
+            const { error: deleteError } = await supabase
                 .from('workout_exercises')
                 .delete()
                 .in('id', exercisesToRemove);
 
             if (deleteError) {
-                this.fastify.log.error('Error removing exercises from workout:', deleteError);
                 throw deleteError;
             }
         }
 
-        const { data, error } = await this.fastify.supabase
+        const { data, error } = await supabase
             .from('workouts')
             .select(`
         *,
@@ -133,21 +125,19 @@ export class WorkoutService {
             .single();
 
         if (error) {
-            this.fastify.log.error('Error fetching updated workout:', error);
             throw error;
         }
 
         return data as Workout;
     }
 
-    async deleteWorkout(workoutId: string) {
-        const { error } = await this.fastify.supabase
+    async deleteWorkout(workoutId: string, supabase: SupabaseClient) {
+        const { error } = await supabase
             .from('workouts')
             .delete()
             .eq('id', workoutId);
 
         if (error) {
-            this.fastify.log.error('Error removing workout:', error);
             throw error;
         }
 

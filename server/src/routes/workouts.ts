@@ -10,15 +10,17 @@ import {
 } from '../schemas/workouts.js';
 import { IdParamSchema } from '../schemas/common.js';
 import { Static } from '@fastify/type-provider-typebox';
+import { verifyAuth } from '../lib/auth.js';
 
 type CreateWorkout = Static<typeof CreateWorkoutSchema>;
 type UpdateWorkout = Static<typeof UpdateWorkoutSchema>;
 
 const workouts: FastifyPluginAsync = async (fastify) => {
-    const workoutService = new WorkoutService(fastify);
+    const workoutService = new WorkoutService();
 
     // GET /workouts
     fastify.get('/', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['workouts'],
             response: {
@@ -28,7 +30,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const workouts = await workoutService.listWorkouts();
+            const workouts = await workoutService.listWorkouts(request._supabaseClient);
             return reply.send({ data: workouts });
         } catch (error) {
             request.log.error(error);
@@ -38,6 +40,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
 
     // POST /workouts
     fastify.post<{ Body: CreateWorkout }>('/', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['workouts'],
             body: CreateWorkoutSchema,
@@ -48,7 +51,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const workout = await workoutService.createWorkout(request.body);
+            const workout = await workoutService.createWorkout(request.body, request._supabaseClient);
             return reply.code(201).send({ data: workout });
         } catch (error) {
             request.log.error(error);
@@ -61,6 +64,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
         Params: Static<typeof IdParamSchema>;
         Body: UpdateWorkout
     }>('/:id', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['workouts'],
             params: IdParamSchema,
@@ -76,7 +80,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
             const workout = await workoutService.updateWorkout({
                 ...request.body,
                 workoutId: request.params.id
-            });
+            }, request._supabaseClient);
             if (!workout) {
                 return reply.code(404).send({ error: 'Workout not found' });
             }
@@ -91,6 +95,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
     fastify.delete<{
         Params: Static<typeof IdParamSchema>
     }>('/:id', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['workouts'],
             params: IdParamSchema,
@@ -106,7 +111,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const id = await workoutService.deleteWorkout(request.params.id);
+            const id = await workoutService.deleteWorkout(request.params.id, request._supabaseClient);
             return reply.send({ id });
         } catch (error) {
             request.log.error(error);

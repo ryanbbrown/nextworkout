@@ -1,11 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchExerciseGroups, postExerciseGroup, putExerciseGroup, deleteExerciseGroup } from './api';
-import { queryKeys } from '../queryKeys';
+import { ExerciseGroup } from './types';
 
 // React Query hooks
 export const useExerciseGroups = () => {
-    return useQuery({
-        queryKey: queryKeys.exerciseGroups.list(),
+    return useQuery<ExerciseGroup[]>({
+        queryKey: ['exerciseGroups'],
         queryFn: fetchExerciseGroups
     });
 };
@@ -16,7 +16,7 @@ export const useCreateExerciseGroup = () => {
     return useMutation({
         mutationFn: postExerciseGroup,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
+            queryClient.invalidateQueries({ queryKey: ['exerciseGroups'] });
         }
     });
 };
@@ -27,7 +27,7 @@ export const useUpdateExerciseGroup = () => {
     return useMutation({
         mutationFn: putExerciseGroup,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
+            queryClient.invalidateQueries({ queryKey: ['exerciseGroups'] });
         }
     });
 };
@@ -38,7 +38,7 @@ export const useDeleteExerciseGroup = () => {
     return useMutation({
         mutationFn: deleteExerciseGroup,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.exerciseGroups.all });
+            queryClient.invalidateQueries({ queryKey: ['exerciseGroups'] });
         }
     });
 }; 

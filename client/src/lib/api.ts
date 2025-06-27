@@ -1,4 +1,5 @@
 import { env } from '@/env';
+import { supabase } from './supabase';
 
 export const API_BASE = env.VITE_API_URL || 'http://localhost:3001/api/v1';
 
@@ -18,6 +19,12 @@ export async function fetchApi<T>(
     // Only set Content-Type for requests that have a body
     if (options.body !== undefined) {
         headers.set('Content-Type', 'application/json');
+    }
+
+    // Get the current session and add the JWT token to headers
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+        headers.set('Authorization', `Bearer ${session.access_token}`);
     }
 
     const response = await fetch(`${API_BASE}${endpoint}`, {

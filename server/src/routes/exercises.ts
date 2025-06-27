@@ -10,15 +10,17 @@ import {
 } from '../schemas/exercises.js';
 import { IdParamSchema } from '../schemas/common.js';
 import { Static, Type } from '@fastify/type-provider-typebox';
+import { verifyAuth } from '../lib/auth.js';
 
 type CreateExercise = Static<typeof CreateExerciseSchema>;
 type UpdateExercise = Static<typeof UpdateExerciseSchema>;
 
 const exercises: FastifyPluginAsync = async (fastify) => {
-    const exerciseService = new ExerciseService(fastify);
+    const exerciseService = new ExerciseService();
 
     // GET /exercises
     fastify.get('/', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['exercises'],
             response: {
@@ -28,7 +30,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const exercises = await exerciseService.listExercises();
+            const exercises = await exerciseService.listExercises(request._supabaseClient);
             return reply.send({ data: exercises });
         } catch (error) {
             request.log.error(error);
@@ -38,6 +40,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
 
     // GET /exercises/group/:groupId
     fastify.get<{ Params: { groupId: string } }>('/group/:groupId', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['exercises'],
             params: Type.Object({
@@ -50,7 +53,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const exercises = await exerciseService.listExercisesByGroup(request.params.groupId);
+            const exercises = await exerciseService.listExercisesByGroup(request.params.groupId, request._supabaseClient);
             return reply.send({ data: exercises });
         } catch (error) {
             request.log.error(error);
@@ -60,6 +63,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
 
     // POST /exercises
     fastify.post<{ Body: CreateExercise }>('/', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['exercises'],
             body: CreateExerciseSchema,
@@ -70,7 +74,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const exercise = await exerciseService.createExercise(request.body);
+            const exercise = await exerciseService.createExercise(request.body, request._supabaseClient);
             return reply.code(201).send({ data: exercise });
         } catch (error) {
             request.log.error(error);
@@ -83,6 +87,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         Params: Static<typeof IdParamSchema>;
         Body: UpdateExercise
     }>('/:id', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['exercises'],
             params: IdParamSchema,
@@ -98,7 +103,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
             const exercise = await exerciseService.updateExercise({
                 ...request.body,
                 exerciseId: request.params.id
-            });
+            }, request._supabaseClient);
             if (!exercise) {
                 return reply.code(404).send({ error: 'Exercise not found' });
             }
@@ -113,6 +118,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
     fastify.delete<{
         Params: Static<typeof IdParamSchema>
     }>('/:id', {
+        onRequest: [verifyAuth],
         schema: {
             tags: ['exercises'],
             params: IdParamSchema,
@@ -128,7 +134,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const id = await exerciseService.deleteExercise(request.params.id);
+            const id = await exerciseService.deleteExercise(request.params.id, request._supabaseClient);
             return reply.send({ id });
         } catch (error) {
             request.log.error(error);

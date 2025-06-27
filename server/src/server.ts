@@ -3,10 +3,13 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { build } from './app.js';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 // Load environment variables from .env file
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-config({ path: join(__dirname, '..', '.env') });
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
+// config({ path: join(__dirname, '..', '.env') });
 
 // Validate required environment variables
 const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_SERVICE_KEY'];

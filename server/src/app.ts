@@ -11,6 +11,11 @@ export async function build(opts: FastifyServerOptions = {}): Promise<FastifyIns
         credentials: true
     });
 
+    // Register JWT plugin (required for Supabase auth)
+    await app.register(import('@fastify/jwt'), {
+        secret: process.env.SUPABASE_JWT_SECRET!
+    });
+
     // Register Supabase plugin
     await app.register(import('./plugins/supabase.js'));
 
