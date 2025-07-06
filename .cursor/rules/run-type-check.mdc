@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+After making changes to the code, always run `npm run type-check` to ensure that there are no type errors.
