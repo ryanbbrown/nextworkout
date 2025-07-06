@@ -31,7 +31,7 @@ const exerciseGroups: FastifyPluginAsync = async (fastify) => {
     }, async (request, reply) => {
         try {
             // Use the per-request authenticated Supabase client
-            const exerciseGroups = await exerciseGroupService.listExerciseGroups(request._supabaseClient);
+            const exerciseGroups = await exerciseGroupService.listExerciseGroups(request.supabaseClient);
             return reply.send({ data: exerciseGroups });
         } catch (error) {
             request.log.error(error);
@@ -52,7 +52,7 @@ const exerciseGroups: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const exerciseGroup = await exerciseGroupService.createExerciseGroup(request.body, request._supabaseClient);
+            const exerciseGroup = await exerciseGroupService.createExerciseGroup(request.body, request.supabaseClient);
             return reply.code(201).send({ data: exerciseGroup });
         } catch (error) {
             request.log.error(error);
@@ -81,7 +81,7 @@ const exerciseGroups: FastifyPluginAsync = async (fastify) => {
             const exerciseGroup = await exerciseGroupService.updateExerciseGroup({
                 ...request.body,
                 exerciseGroupId: request.params.id
-            }, request._supabaseClient);
+            }, request.supabaseClient);
             if (!exerciseGroup) {
                 return reply.code(404).send({ error: 'Exercise group not found' });
             }
@@ -112,7 +112,7 @@ const exerciseGroups: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const id = await exerciseGroupService.deleteExerciseGroup(request.params.id, request._supabaseClient);
+            const id = await exerciseGroupService.deleteExerciseGroup(request.params.id, request.supabaseClient);
             return reply.send({ id });
         } catch (error) {
             request.log.error(error);

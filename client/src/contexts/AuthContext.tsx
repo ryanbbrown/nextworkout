@@ -1,8 +1,19 @@
-
 import { createContext, useContext, useEffect, useState } from 'react'
-import { Session, User } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
+import { authApi, AuthResponse } from '@/lib/api'
+
+interface User {
+    id: string;
+    email: string;
+    created_at: string;
+}
+
+interface Session {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    token_type: string;
+}
 
 interface AuthContextType {
     user: User | null
@@ -22,46 +33,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { toast } = useToast()
 
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session)
-            setUser(session?.user ?? null)
-            setIsLoading(false)
-        })
-
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
-                setSession(session)
-                setUser(session?.user ?? null)
-                setIsLoading(false)
+        // Check for existing session in localStorage
+        const savedUser = localStorage.getItem('user')
+        const savedSession = localStorage.getItem('session')
+        
+        if (savedUser && savedSession) {
+            try {
+                const parsedUser = JSON.parse(savedUser)
+                const parsedSession = JSON.parse(savedSession)
+                
+                // Check if session is still valid (not expired)
+                const now = Math.floor(Date.now() / 1000)
+                const sessionExpiry = parsedSession.expires_at || 0
+                
+                if (sessionExpiry > now) {
+                    setUser(parsedUser)
+                    setSession(parsedSession)
+                }
+            } catch (error) {
+                // Clear invalid data
+                localStorage.removeItem('user')
+                localStorage.removeItem('session')
             }
-        )
-
-        return () => subscription.unsubscribe()
+        }
+        
+        setIsLoading(false)
     }, [])
 
     const signIn = async (email: string, password: string) => {
         try {
             setIsLoading(true)
-            const { error } = await supabase.auth.signInWithPassword({
-                email,
-                password
-            })
+            const response: AuthResponse = await authApi.login(email, password)
 
-            if (error) {
-                toast({
-                    title: "Sign in failed",
-                    description: error.message,
-                    variant: "destructive"
-                })
-                throw error
+            const sessionWithExpiry = {
+                ...response.session,
+                expires_at: Math.floor(Date.now() / 1000) + response.session.expires_in
             }
+
+            // Store in state
+            setUser(response.user)
+            setSession(sessionWithExpiry)
+
+            // Store in localStorage
+            localStorage.setItem('user', JSON.stringify(response.user))
+            localStorage.setItem('session', JSON.stringify(sessionWithExpiry))
+            localStorage.setItem('access_token', response.session.access_token)
 
             toast({
                 title: "Signed in successfully",
                 description: "Welcome back!",
             })
+        } catch (error) {
+            toast({
+                title: "Sign in failed",
+                description: error instanceof Error ? error.message : "An error occurred",
+                variant: "destructive"
+            })
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -70,24 +98,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signUp = async (email: string, password: string) => {
         try {
             setIsLoading(true)
-            const { error } = await supabase.auth.signUp({
-                email,
-                password
-            })
-
-            if (error) {
-                toast({
-                    title: "Sign up failed",
-                    description: error.message,
-                    variant: "destructive"
-                })
-                throw error
-            }
+            const response = await authApi.signup(email, password)
 
             toast({
                 title: "Account created",
-                description: "Check your email for the confirmation link",
+                description: response.message,
             })
+        } catch (error) {
+            toast({
+                title: "Sign up failed",
+                description: error instanceof Error ? error.message : "An error occurred",
+                variant: "destructive"
+            })
+            throw error
         } finally {
             setIsLoading(false)
         }
@@ -96,7 +119,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signOut = async () => {
         try {
             setIsLoading(true)
-            await supabase.auth.signOut()
+            await authApi.logout()
+            
+            // Clear state
+            setUser(null)
+            setSession(null)
+            
+            // Clear localStorage
+            localStorage.removeItem('user')
+            localStorage.removeItem('session')
+            localStorage.removeItem('access_token')
+            
+            toast({
+                title: "Signed out successfully",
+            })
+        } catch (error) {
+            // Even if logout fails on the server, we should clear local state
+            setUser(null)
+            setSession(null)
+            localStorage.removeItem('user')
+            localStorage.removeItem('session')
+            localStorage.removeItem('access_token')
+            
             toast({
                 title: "Signed out successfully",
             })

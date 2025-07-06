@@ -1,27 +1,22 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dumbbell, History, Plus, Pencil } from "lucide-react";
+import { History, Plus, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useExerciseGroups } from "@/services/exerciseGroups";
-import { useExercises } from "@/services/exercises";
+import { useExercises, Exercise } from "@/services/exercises";
 import { format, parseISO } from "date-fns";
 import { useMemo } from "react";
 import { ExerciseGroupCard } from "@/components/ExerciseGroupCard";
-import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 
 const Home = () => {
-    const { user } = useAuth();
-    const { toast } = useToast();
     const { data: exerciseGroups, isLoading: loadingGroups } = useExerciseGroups();
-    const { data: exercises, isLoading: loadingExercises } = useExercises();
+    const { data: exercises } = useExercises();
 
     // Get least recently performed exercises for each group
     const groupExercises = useMemo(() => {
-        if (!exerciseGroups || !exercises) return {};
+        if (!exerciseGroups || !exercises) return {} as Record<string, Exercise[]>;
 
-        return exerciseGroups.reduce((acc, group) => {
+        return exerciseGroups.reduce<Record<string, Exercise[]>>((acc, group) => {
             // Filter exercises for this group
             const groupExercisesList = exercises.filter(e => e.group_id === group.id);
 

@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { ExerciseGroup } from '@/services/exerciseGroups';
-import { supabase } from '@/lib/supabase';
 import { Exercise } from '@/services/exercises';
+import { fetchExercises } from '@/services/exercises/api';
 
 // Custom hook to fetch exercises for all groups
 export function useExercisesForGroups(groups: ExerciseGroup[] | undefined) {
@@ -11,7 +10,7 @@ export function useExercisesForGroups(groups: ExerciseGroup[] | undefined) {
 
     // Update exercises when groups change
     useEffect(() => {
-        const fetchExercises = async () => {
+        const fetchExercisesForGroups = async () => {
             if (!groups || groups.length === 0) {
                 setLoading(false);
                 return;
@@ -20,28 +19,15 @@ export function useExercisesForGroups(groups: ExerciseGroup[] | undefined) {
             const exercisesMap: Record<string, Exercise[]> = {};
 
             try {
-                // Fetch all exercises at once, then organize by group
-                const { data, error } = await supabase
-                    .from('exercises')
-                    .select('*')
-                    .in('group_id', groups.map(group => group.id))
-                    .order('name');
-
-                if (error) {
-                    console.error('Error fetching exercises:', error);
-                    setLoading(false);
-                    return;
-                }
-
-                // Organize exercises by group ID
-                const exercises = data as Exercise[];
+                // Fetch all exercises using the API
+                const exercises = await fetchExercises();
 
                 // Initialize empty arrays for all groups
                 groups.forEach(group => {
                     exercisesMap[group.id] = [];
                 });
 
-                // Fill in exercises for each group
+                // Filter exercises by group ID and organize them
                 exercises.forEach(exercise => {
                     if (exercisesMap[exercise.group_id]) {
                         exercisesMap[exercise.group_id].push(exercise);
@@ -57,7 +43,7 @@ export function useExercisesForGroups(groups: ExerciseGroup[] | undefined) {
         };
 
         setLoading(true);
-        fetchExercises();
+        fetchExercisesForGroups();
     }, [groups]);
 
     return { exercisesByGroupId, loading };

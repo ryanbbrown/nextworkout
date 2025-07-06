@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 interface ExerciseCardProps {
     name: string;
     // For the second line content - either description or last performed date

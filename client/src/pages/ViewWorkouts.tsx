@@ -30,7 +30,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
@@ -318,12 +317,12 @@ const ViewWorkouts = () => {
                                             <label className="text-sm font-medium">Exercise Sets</label>
                                         </div>
 
-                                        {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, index: number) => (
-                                            <div
-                                                key={ex.id}
-                                                className={`flex items-center justify-between p-1.5 rounded-md ${exercisesToRemove.includes(ex.id) ? 'bg-red-900/20 border border-red-900/40' : ''
-                                                    }`}
-                                            >
+                                                                {selectedWorkout.workout_exercises?.map((ex: WorkoutExercise, _index: number) => (
+                            <div
+                                key={ex.id}
+                                className={`flex items-center justify-between p-1.5 rounded-md ${exercisesToRemove.includes(ex.id) ? 'bg-red-900/20 border border-red-900/40' : ''
+                                    }`}
+                            >
                                                 <span className="text-sm">
                                                     {ex.exercise?.name}
                                                     {exercisesToRemove.includes(ex.id) && (

@@ -12,6 +12,9 @@ export default fp(async function (fastify) {
             }
         }
     });
+
+    // Debug: Log what gets decorated
+    fastify.log.info('Supabase plugin registered. Available properties:', Object.keys(fastify));
 }, {
     name: 'supabase-plugin'
 }); 

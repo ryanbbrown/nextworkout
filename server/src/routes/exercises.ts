@@ -30,7 +30,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const exercises = await exerciseService.listExercises(request._supabaseClient);
+            const exercises = await exerciseService.listExercises(request.supabaseClient);
             return reply.send({ data: exercises });
         } catch (error) {
             request.log.error(error);
@@ -53,7 +53,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const exercises = await exerciseService.listExercisesByGroup(request.params.groupId, request._supabaseClient);
+            const exercises = await exerciseService.listExercisesByGroup(request.params.groupId, request.supabaseClient);
             return reply.send({ data: exercises });
         } catch (error) {
             request.log.error(error);
@@ -74,7 +74,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const exercise = await exerciseService.createExercise(request.body, request._supabaseClient);
+            const exercise = await exerciseService.createExercise(request.body, request.supabaseClient);
             return reply.code(201).send({ data: exercise });
         } catch (error) {
             request.log.error(error);
@@ -103,7 +103,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
             const exercise = await exerciseService.updateExercise({
                 ...request.body,
                 exerciseId: request.params.id
-            }, request._supabaseClient);
+            }, request.supabaseClient);
             if (!exercise) {
                 return reply.code(404).send({ error: 'Exercise not found' });
             }
@@ -134,7 +134,7 @@ const exercises: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const id = await exerciseService.deleteExercise(request.params.id, request._supabaseClient);
+            const id = await exerciseService.deleteExercise(request.params.id, request.supabaseClient);
             return reply.send({ id });
         } catch (error) {
             request.log.error(error);

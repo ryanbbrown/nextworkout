@@ -30,7 +30,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const workouts = await workoutService.listWorkouts(request._supabaseClient);
+            const workouts = await workoutService.listWorkouts(request.supabaseClient);
             return reply.send({ data: workouts });
         } catch (error) {
             request.log.error(error);
@@ -51,7 +51,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const workout = await workoutService.createWorkout(request.body, request._supabaseClient);
+            const workout = await workoutService.createWorkout(request.body, request.supabaseClient);
             return reply.code(201).send({ data: workout });
         } catch (error) {
             request.log.error(error);
@@ -80,7 +80,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
             const workout = await workoutService.updateWorkout({
                 ...request.body,
                 workoutId: request.params.id
-            }, request._supabaseClient);
+            }, request.supabaseClient);
             if (!workout) {
                 return reply.code(404).send({ error: 'Workout not found' });
             }
@@ -111,7 +111,7 @@ const workouts: FastifyPluginAsync = async (fastify) => {
         }
     }, async (request, reply) => {
         try {
-            const id = await workoutService.deleteWorkout(request.params.id, request._supabaseClient);
+            const id = await workoutService.deleteWorkout(request.params.id, request.supabaseClient);
             return reply.send({ id });
         } catch (error) {
             request.log.error(error);
