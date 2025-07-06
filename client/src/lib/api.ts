@@ -1,6 +1,28 @@
 import { env } from '@/env';
 
-export const API_BASE = env.VITE_API_URL || 'http://localhost:3001/api/v1';
+// Determine API base URL based on environment
+const getApiBase = () => {
+  // Check if we're running locally vs production
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+    
+    // If we're running locally, use the local API
+    if (isLocal) {
+      return env.VITE_API_URL || 'http://localhost:3001/api/v1';
+    }
+    
+    // If we're in production and VITE_API_URL is set to a production URL, use it
+    if (env.VITE_API_URL && !env.VITE_API_URL.includes('localhost') && !env.VITE_API_URL.includes('127.0.0.1')) {
+      return env.VITE_API_URL;
+    }
+  }
+  
+  // Default to relative path for production
+  return '/api/v1';
+};
+
+export const API_BASE = getApiBase();
 
 export class APIError extends Error {
     constructor(public status: number, message: string) {
