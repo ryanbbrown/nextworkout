@@ -25,3 +25,9 @@ dist-ssr
 
 # Env files
 *.env
+.env.test
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
