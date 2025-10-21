@@ -102,17 +102,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             toast({
                 title: "Account created",
-                description: response.message,
+                description: "Signing you in...",
             })
+
+            // Automatically sign in after successful signup
+            // Sign in will handle its own loading state
+            setIsLoading(false)
+            await signIn(email, password)
         } catch (error) {
+            setIsLoading(false)
             toast({
                 title: "Sign up failed",
                 description: error instanceof Error ? error.message : "An error occurred",
                 variant: "destructive"
             })
             throw error
-        } finally {
-            setIsLoading(false)
         }
     }
 
