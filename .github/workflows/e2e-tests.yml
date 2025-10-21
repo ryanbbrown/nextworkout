@@ -27,12 +27,6 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
 
-    - name: Create .env.test file
-      run: |
-        cat > .env.test << EOF
-        PLAYWRIGHT_BASE_URL=http://localhost:5173
-        EOF
-
     - name: Run Playwright tests
       run: npm run test:e2e
       env:
