@@ -27,6 +27,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : 1, // Keep 1 worker for sequential tests
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  /* Timeout for each test */
+  timeout: 120000, // 2 minutes for comprehensive tests
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
