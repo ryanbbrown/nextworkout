@@ -30,4 +30,7 @@ dist-ssr
 # Playwright
 /test-results/
 /playwright-report/
-/playwright/.cache/server/seed.json
+/playwright/.cache/
+
+# Data
+server/seed.json
